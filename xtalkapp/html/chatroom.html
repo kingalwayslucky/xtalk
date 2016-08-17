@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/chatroom.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="background-color: #1E2E3E;">
+			<a id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 id="title" class="mui-title"></h1>
+			<a id="setting" class="mui-icon mui-icon-person mui-pull-right"></a>
+		</header>
+		<div class="mui-content"></div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/changelanguage/chinese.js"></script>
+	<script src="../js/changelanguage/english.js"></script>
+	<script src="../js/changelanguage/TraditionalChinese.js"></script>
+	<script src="../js/changelanguage/Korean.js"></script>
+	<script src="../js/changelanguage/Japanese.js"></script>
+	<script src="../js/changelanguage/Tibetan.js"></script>
+	<script src="../js/changelanguage/changeLanguage.js"></script>
+	<script type="text/javascript">
+		var names, headpic, user_id, newnum,admin;
+		var resType;
+		mui.plusReady(function() {
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			admin = plus.storage.getItem("admin");
+			
+			names = plus.webview.currentWebview().name;
+			console.log("----------------------"+admin+names);
+			headpic = plus.webview.currentWebview().headpic;
+			user_id = plus.webview.currentWebview().user_id;
+			newnum = plus.webview.currentWebview().newnum;
+			plus.storage.setItem(user_id,newnum);
+			console.log("======================="+newnum);
+			console.log(plus.storage.getItem(user_id));
+			mui.fire(plus.webview.getWebviewById("html/Contact/contact.html"),"reloadlist");
+			getName();
+			mui.init({
+				subpages:[{
+					url:'chatroom_sub.html',
+					id:'chatroom_sub.html',  
+					styles:{
+						top: '44px',
+						bottom: '0px',
+					},
+					extras:{
+						name:names,
+						headpic:headpic,
+						user_id:user_id
+					}
+				}]
+			});
+		});
+		/*
+		 * 本地备注替换
+		 */
+		function getName(){
+			var name = dictRes[resType]["addnode011"];
+			var index;
+			data=plus.storage.getItem('jsonst');
+			console.log(data);
+			console.log(user_id);
+			if(user_id==admin){
+				var user_name=dictRes[resType]["contact007"];
+			}else{
+				if(!data){
+					data = dictRes[resType]["addnode011"];
+					return
+				}
+				data=JSON.parse(data);
+				for(var i=0;i<data.length;i++){
+					if(data[i].id==user_id){
+						index=i;
+					}else{
+						
+					}
+				}
+				console.log(index);
+				console.log(data.length);
+				if(index==undefined){
+					var user_name=name;
+				}else{
+					var user_name=data[index].remark;
+				}
+			}
+				
+//			if('remark' in data[index]){
+//				var user_name=data[index].remark;
+//				console.log("111");
+//			}else{
+//				console.log("222");
+//				var user_name=name;
+//			}
+			
+			document.getElementById("title").innerText=user_name;
+		}
+		/*
+		 * 修改备注
+		 */
+		document.getElementById("setting").addEventListener("tap",function(){
+			if(user_id==admin){
+				mui.toast(dictRes[resType]["allPage025"]);
+				return;
+			}
+			mui.openWindow({
+				url: 'chat_setting.html', 
+				extras:{
+					name: names,
+					user_id:user_id,
+					headpic:headpic
+				}
+			});
+		});
+		/*
+		 * 刷新页面
+		 */
+		window.addEventListener('refresh', function(e){
+			console.log('备注更改');
+			getName();
+			
+		});
+	</script>
+
+</html>

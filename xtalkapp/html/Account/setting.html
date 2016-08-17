@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../../css/setting.css" />
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+			#holder {
+				width: 300px;
+				height: 300px;
+				/*border: solid 1px #bbb;*/
+				/*border-radius: 5px;*/
+				margin: 0px auto;
+				margin-bottom: 0px;
+				/*background-color: #fff;*/
+			}
+			#alert {
+				text-align: center;
+				padding: 20px 10px;
+				margin-top: 100px;
+				color: #e73a33;
+			}
+			#mask_pwd{
+				display: none; 
+				z-index: 999; 
+				text-align: center; 
+				position: fixed;
+				top: 0;
+				bottom:0;
+				width: 100%;
+				/*height: 380px;*/
+				/*margin-left: 5%;*/
+				background-color: #1E2E3E;
+			}
+			#back{
+				font-size: 40px;
+				color: #B0B7C1;
+				margin-top: 5px;
+				margin-left: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-pull-left"> 
+				<img src="../../img/back.png"/>
+			</a>
+			<h1 id="accSetting" class="mui-title">账户设置</h1>
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+				<li id="changepsw" class="mui-table-view-cell">
+					密码修改
+				</li>
+				<li id="highSetting" class="mui-table-view-cell">
+					安全设置
+				</li>
+			</ul>
+			<!--<ul class="mui-table-view">
+				<li id="about" class="mui-table-view-cell">
+					关于我们
+				</li>
+			</ul>-->
+			<ul class="mui-table-view">
+				<li id="logout" class="mui-table-view-cell">
+					退出登录
+				</li>
+			</ul>
+		</div>
+		<div id="mask_pwd">
+			<a id="back" class="mui-icon mui-icon-closeempty mui-pull-left"></a> 
+			<div id='alert'>请输入手势密码</div>
+			<div id='holder' class="mui-locker" data-locker-options='{"ringColor":"rgba(255,255,255,1)","fillColor":"rgba(41,57,72,.9)","pointColor":"rgba(231,58,51,1)","lineColor":"rgba(231,58,51,1)"}' data-locker-width='300' data-locker-height='300'></div>
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/mui.locker.js"></script>
+	<script src="../../js/changelanguage/chinese.js"></script>
+	<script src="../../js/changelanguage/english.js"></script>
+	<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+	<script src="../../js/changelanguage/Korean.js"></script>
+	<script src="../../js/changelanguage/Japanese.js"></script>
+	<script src="../../js/changelanguage/Tibetan.js"></script>
+	<script src="../../js/changelanguage/changeLanguage.js"></script>
+	<script type="text/javascript">
+		var pwd;
+		var resType;
+		mui.plusReady(function() {
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"accSetting","RID":"setting001","ATYPE":1},
+							{"TID":"changepsw","RID":"setting002","ATYPE":1},
+							{"TID":"highSetting","RID":"setting003","ATYPE":1},
+							{"TID":"logout","RID":"setting004","ATYPE":1},
+							{"TID":"alert","RID":"setting005","ATYPE":1}]
+			resReplace(resType, changeLan);
+		
+		 	pwd = plus.webview.getWebviewById("home").pwd;
+		});
+		/*
+		 * 密码修改
+		 */
+		document.getElementById("changepsw").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'changepsw.html'
+			});
+		});
+		/*
+		 * 密码验证遮罩
+		 */
+		mask=mui.createMask(function(){
+			document.getElementById("mask_pwd").style.display='none';
+		});
+		document.getElementById("highSetting").addEventListener('tap',function(){
+			mask.show();
+			document.getElementById("mask_pwd").style.display='block';
+		});	
+		document.getElementById("back").addEventListener("tap",function(){
+			mask.close();
+			document.getElementById("mask_pwd").style.display='none';
+		});
+		/*
+		 * 手势操作
+		 */
+		(function($, doc) {
+			$.init();
+			var holder = doc.querySelector('#holder'),
+				alert = doc.querySelector('#alert'),
+				record = [];
+			//处理事件
+			holder.addEventListener('done', function(event) {
+				var rs = event.detail;
+				if (rs.points.length < 4) {
+					mui.toast(dictRes[resType]["allPage001"]);
+					record = [];
+					rs.sender.clear();
+					return;
+				}
+				record.push(rs.points.join(''));
+				console.log(record);
+				rs.sender.clear();
+				if(record[record.length-1] == pwd){
+					mui.openWindow({
+						url: '../Contact/code_setting.html'
+					});
+					mask.close();
+					document.getElementById("mask_pwd").style.display='none';
+				}else{
+					record = [];
+					mui.toast(dictRes[resType]["allPage002"]);
+				}
+			});
+		}(mui, document));
+		/*
+		 * 关于我们
+		 */
+//		document.getElementById("about").addEventListener("tap",function(){
+//			mui.openWindow({
+//				url: "aboutus.html",
+//			});
+//		});
+		/*
+		 * 退出登录
+		 */
+		document.getElementById("logout").addEventListener("tap",function(){
+			plus.runtime.restart();
+		});
+	</script>
+
+</html>

@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="../../js/mui.min.js"></script>
+    <link href="../../css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="../../css/pullToRefresh.material.css "/>
+    <script type="text/javascript" charset="UTF-8">
+      	mui.init();
+    </script>
+</head>
+<style type="text/css">
+	.oa-contact-cell.mui-table .mui-table-cell {
+				padding: 11px 0;
+				vertical-align: middle;
+			}
+			
+			.oa-contact-cell {
+				position: relative;
+				margin: -11px 0;
+			}
+	
+			.oa-contact-avatar {
+				width: 75px;
+			}
+			.oa-contact-avatar img {
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
+			}
+			.oa-contact-content {
+				width: 100%;
+			}
+			.oa-contact-name {
+				margin-right: 20px;
+			}
+			.oa-contact-name, oa-contact-position {
+				float: left;
+			}
+			a{
+				color: #333333;
+			}
+			.myhead {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				float: left;
+				margin-right: 20px;
+			}
+			.erweima {
+				width: 25px;
+				height: 25px;
+				float: right;
+				margin-top: -33px;
+				margin-right: 10px;
+			}
+			#tabbar-with-map img{
+				width: 70px;
+				height: 70px;
+				border-radius: 15px;
+				margin-top: 20px;
+			}
+			#tabbar-with-map p{
+				text-align: center;
+				color: black;
+			}
+			.app {
+				width: 220px;
+				margin: 0 auto;
+			}
+			.mui-bar-tab .mui-tab-item.mui-active {
+			    color: white;
+			    background-color: rgb(237,68,29);
+			    
+			}
+			.mui-bar-tab .mui-tab-item {
+			    color: white;
+			    background-color: #242529;
+			    
+			}
+			#add_p img{
+				position: absolute;
+				height: 40px;
+				width: 40px;
+				padding: 10px;
+				margin-top: 2px;
+				margin-right: -10px;
+				right: 3%;
+			}
+			#search_div img{
+				position: absolute;
+				height: 20px;
+				width: 20px;
+				margin-top: 12px;
+				right: 15%;
+			}
+			#quick_search{
+				position: absolute;top: 2px;height: 40px;width: 85%;
+				/*left: 12%;*/
+				background-color: #293948;
+				color: #B0B7C1;
+			}
+			#qrcode{
+				height:200px;width: 100%;text-align: center;
+			}
+			#qrcode img{
+				width: 200px;height: 200px;text-align: center;
+			}
+			.tapchange{
+				width: 100%;
+				height: 40px;
+				text-align: center;
+				display: inline-block;
+				/*border: 1px solid red;*/
+				/*border: 1px solid red;*/
+				
+			}
+			.tapchange div{
+				height: 40px;
+				line-height: 40px;
+				width: 30%;
+				/*border: 1px solid red;*/
+				display:inline-block;
+			}
+			#scroll{
+				min-height: 600px;
+			}
+			.mui-bar {
+
+			    background-color: #1e2e3e;
+	
+			}
+			#none{
+				margin-top: 100px;
+				height: 180px;
+				/*border: 1px solid #EFEFF4;*/
+				text-align: center;
+				background-color: #EFEFF4; 
+				border: none;
+				display: block;
+			}
+			#none img{
+				margin-top: 20px;
+				height: 100px;
+				width: 100px;
+			}
+			#none p{
+				margin-top: 5px;
+				font-size: 14px;
+				color: #B0B7C1;
+			}
+			.mui-table-view:before {
+			    position: absolute;
+			    right: 0;
+			    left: 0;
+			    height: 0px;
+			    content: ''; 
+			    -webkit-transform: scaleY(.5);
+			    transform: scaleY(.5);
+			    background-color: #c8c7cc;
+			    top: -1px;
+			}
+			.mui-table-view:after {
+			    position: absolute;
+			    right: 0;
+			    bottom: 0;
+			    left: 0;
+			    height: 0px;
+			    content: '';
+			    -webkit-transform: scaleY(.5);
+			    transform: scaleY(.5);
+			    background-color: #c8c7cc;
+			}
+			.isread{
+				position: absolute;right: 15px; border: 1px solid red;min-width:60px;height: 20px; display: inline-block; text-align: center;color: #FFFFFF;background-color: #E73A33;border-radius: 6px;top: 30px;font-size: 10px;
+			}
+</style>
+<body>
+		<div id="add_person" style="width: 100%;height: 100%;position: fixed;z-index: 999;display: none;background-color: #324050;opacity: 0.9;">
+		<img src="../../img/float.png" style="background-position: center;background-size: cover;height: 55%;width: 100%;padding-bottom: 35%;padding-left: 5%;"/>
+		<div style="color: white;font-size: 14px;position: absolute;text-align: center;top: 15%;left: 29%;"><span id="nopersonTop">此账户还未添加任何联系人</span><br /><span id="nopersonBottom">点击右上角添加</span></div>
+		<div id="watched" style="position: absolute;padding: 5px;border: 1px solid red;color: #E73A33;border-radius: 6px;text-align: center;top: 24%;left: 42%;font-size: 15px;">我知道了</div>
+		</div>
+	<div class="mui-bar mui-bar-nav">
+			<!--<a id="add_p" class="mui-icon mui-icon-plusempty mui-pull-right" style="font-size: 35px;margin-bottom: 10px;"></a>-->
+			<input id="quick_search" type="text" onfocusout="ischeck()" placeholder="快速查找"/>
+			<div id="add_p"><img src="../../img/27.png"/></div>
+			<div id="search_div"><img src="../../img/26.png"/></div>
+			<!--<a id="setting" class="mui-icon mui-icon-gear mui-pull-right"></a>-->
+	</div>
+
+	<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+	<div id="scroll" class="mui-scroll">
+	<div id='none'>
+		<img id="aaa" src="../../img/contact_none.png"/>
+		<p id="noperson">您暂未添加联系人</p>
+	</div>
+	<ul id="list_ul" class="mui-table-view mui-table-view-chevron" >  
+		
+				<!--<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="../../img/headpic_1.jpg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">叶文洁</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									好久没联系了，找个机会聚聚吧。
+								</p>
+							</div>
+							
+						</div>
+						
+					</div>
+					<span class="isread">未读消息</span>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="../../img/headpic_2.png" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">艾AA</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									这个周末准备怎么过啊？
+								</p>
+							</div>
+					
+						</div>
+					</div>
+					<span style="position: absolute;right: 15px; border: 1px solid red;min-width:60px;height: 20px; display: inline-block; text-align: center;color: #FFFFFF;background-color: #E73A33;border-radius: 6px;top: 30px;font-size: 13px;">未读:1</span>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="../../img/headpic_3.jpeg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">罗辑</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									我这边遇到点问题，你过来看一下
+								</p>
+							</div>
+						</div>
+					</div>
+	
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="../../img/headpic_4.jpg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">云天明</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									我换号码了，这是我的新号码：18632459654
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="../../img/headpic_5.jpeg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">史强</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									吃饭了没有？
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>-->
+			</ul>
+				</div>
+				<!--<img src=""/>-->
+		</div>
+		
+</body>
+	<script src="../../js/backquit.js"></script>
+	<script src="../../js/mui.pullToRefresh.js"></script>
+	<script src="../../js/mui.pullToRefresh.material.js"></script>
+	<script src="../../js/changelanguage/chinese.js"></script>
+	<script src="../../js/changelanguage/english.js"></script>
+	<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+	<script src="../../js/changelanguage/Korean.js"></script>
+	<script src="../../js/changelanguage/Japanese.js"></script>
+	<script src="../../js/changelanguage/Tibetan.js"></script>
+	<script src=" ../../js/changelanguage/changeLanguage.js"></script>
+	<script type="text/javascript">
+		var act,pwd,url,mask;
+		var resType;
+		var admin;
+		var chatNum;//是否有新消息
+		mui.init({
+		gestureConfig:{
+				   	longtap: true, //默认为false
+			  	}
+				});
+		mui.plusReady(function() {
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"nopersonTop","RID":"contact001","ATYPE":1},
+								{"TID":"nopersonBottom","RID":"contact002","ATYPE":1},
+								{"TID":"watched","RID":"contact003","ATYPE":1},
+								{"TID":"quick_search","RID":"contact004","ATYPE":2},
+								{"TID":"noperson","RID":"contact005","ATYPE":1}]
+				resReplace(resType, changeLan);
+				admin = plus.storage.getItem("admin");
+				console.log("----------------------"+admin);
+				url = plus.storage.getItem("url");
+				pwd = plus.webview.getWebviewById("home").pwd;
+		 		act = plus.storage.getItem("account");
+		 		/*
+		 		 * 
+		 		 */
+		 		mask=mui.createMask(function(){
+				document.getElementById("add_person").style.display='none';
+				});
+				document.getElementById("watched").addEventListener('tap',function(){
+					mask.close();
+				});
+				initpullaction();
+	//			getDatalist();
+				getNetlist();
+//				listnone();
+				(function($) {
+				$('#list_ul').on('longtap', '.mui-table-view-cell', function(event) {
+					var li = this;
+					var index;
+					var thisid=this.id;
+					var thisremark=this.remark;
+					var thissrc=this.src;
+					console.log(thisid+thisremark+thissrc);
+					var data = plus.storage.getItem('jsonst');
+					if(!data){
+						mui.confirm(dictRes[resType]["contact006"], dictRes[resType]["allPage011"], btnArray, function(e) {
+						if(e.index==0){
+						deleteContact(thisid);
+						console.log("网络数据");
+						li.parentNode.removeChild(li); 
+						listnone();	
+						}else{
+							return;
+						}
+						
+					});
+					}else{
+						
+					
+					console.log(data);
+					data=JSON.parse(data);
+					console.log(data.length);
+					mui.confirm(dictRes[resType]["contact006"], dictRes[resType]["allPage011"], btnArray, function(e) {
+//						deleteContact(thisid);
+						if (e.index == 0) {
+							for(var i=0;i<data.length;i++){
+								if(data[i].id==thisid){
+									console.log(i);
+									index=i;
+								}
+							}
+							
+							console.log(index);
+							if(index==undefined){
+								console.log("网络数据");
+								deleteContact(thisid);
+								li.parentNode.removeChild(li); 
+							}else{
+								data.splice(index,1);
+								console.log(JSON.stringify(data));
+								data=JSON.stringify(data);
+								plus.storage.setItem('jsonst',data);
+								deleteContact(thisid);
+								li.parentNode.removeChild(li); 
+								listnone();
+								console.log(plus.storage.getItem('jsonst'));	
+							}
+						
+						} else {
+							return;
+						}
+					});
+					}
+				});
+				var btnArray = [dictRes[resType]["allPage012"], dictRes[resType]["allPage013"]];
+			})(mui);
+	
+			});
+			/*
+			 * 删除删除会话通道
+			 */
+			function deleteContact(id){
+				console.log("11111111111111111");
+				console.log('----------------------------'+id);
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM019",
+					"addr":act,
+					"pwd":pwd,
+					"target":id
+				};
+				console.log(JSON.stringify(argin));
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get', 
+					timeout: 10000,
+					success: function(data) {
+						if(data.cbm == "OK"){ 
+							plus.storage.setItem(id,"0");
+							console.log("删除会话通道成功");
+						}
+						if(data.cbm=='ERR'){
+							console.log("删除会话通道失败");
+							
+						} 
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					} 
+				}); 
+				
+			}
+			function initpullaction() {
+			//阻尼系数
+			var deceleration = mui.os.ios ? 0.003 : 0.0009;
+			mui('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, //是否显示滚动条
+				deceleration: deceleration
+			});
+			mui('#scroll').pullToRefresh({
+				down: {
+					callback: pulldownRefresh
+				}
+			});
+			};
+			//获取联系列表
+			function getDatalist(){
+				var data =plus.storage.getItem('jsonst');
+				if(!data){
+					return
+				}
+				console.log('----------'+data);
+				var data =JSON.parse(data);
+				var ul= document.getElementById("list_ul");
+				console.log("ok"+data.length);
+				for(var i=0;i<data.length;i++){
+					var toid=data[i].id;
+					var user_id =data[i].id.substr(0,25)+'...';
+					var user_remark=data[i].remark;
+					var src =data[i].src;
+					var li = document.createElement("li");
+					li.id=data[i].id;
+					li.remark=data[i].remark;
+					li.src=data[i].src;
+					li.className='mui-table-view-cell';
+					li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div>';
+					ul.appendChild(li);
+					listnone();
+					li.addEventListener('tap',function() {
+						console.log(this.remark+this.src+this.id);
+							mui.openWindow({ 
+								url:'../../html/chatroom.html',
+								extras:{
+									name:user_remark,
+									headpic:src,
+									user_id:this.id
+								}
+							});
+						});
+				}
+				
+			}
+			/*
+			 * 获取网络列表
+			 */
+			function getNetlist(){
+				console.log(act+'-'+pwd);
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM013",
+					"addr":act,
+					"pwd":pwd,
+					"start":"0", 
+					"count":"100"
+				};
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get', 
+					timeout: 10000,
+					success: function(data) {
+						console.log('---------------------------'+JSON.stringify(data));
+						
+						if(data.cbm == "OK"){ 
+							var arr=[];
+							var net=JSON.parse(data.cms).contacts;
+							var local =plus.storage.getItem('jsonst');
+							console.log(local);
+							/*
+							 * 列表合并
+							 */
+							if(local==null){
+								arr=net;
+								console.log("-------"+arr.length+JSON.stringify(arr));
+								var ul= document.getElementById("list_ul");
+								var user_remark=dictRes[resType]["addnode011"];
+								var admin_remark=dictRes[resType]["contact007"];
+
+								var adminsrc='../../img/web2.png';
+								var src='../../img/i5.png';
+								for(var p=0;p<arr.length;p++){
+									if(arr[p].id==admin){
+										console.log("1111111111111111111111111111111111");
+										var li = document.createElement("li");
+	//									var iflag=arr[p].iflag;
+										var user_id =arr[p].id.substr(0,25)+'...';
+										li.id=arr[p].id;
+										li.remark=admin_remark;
+										li.src=adminsrc; 
+										li.className='mui-table-view-cell';
+										getChatNum(arr[p].id, li);
+										if(chatNum == true){
+											console.log("有");
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+adminsrc+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+admin_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div><span class="isread">未读消息</span>';
+										}else{
+											console.log("无");																		
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+adminsrc+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+admin_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div>';
+										}
+										console.log(li.newnum);
+										ul.appendChild(li);
+										listnone();
+										li.addEventListener('tap',function() {
+											mui.openWindow({
+												url:'../../html/chatroom.html',
+												extras:{
+													name:this.remark,
+													headpic:this.src,
+													user_id:this.id,
+													newnum:this.newnum
+												}
+											});
+										});
+									}else{
+										console.log("11111111111111111111111111111111112");
+										var li = document.createElement("li");
+	//									var iflag=arr[p].iflag;
+										var user_id =arr[p].id.substr(0,25)+'...';
+										li.id=arr[p].id;
+										li.remark=user_remark;
+										li.src=src; 
+										li.className='mui-table-view-cell';
+										getChatNum(arr[p].id, li);
+										if(chatNum == true){
+											console.log("有");
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div><span class="isread">未读消息</span>';
+										}else{
+											console.log("无");																		
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div>';
+										}
+										console.log(li.newnum);
+										ul.appendChild(li);
+										listnone();
+										li.addEventListener('tap',function() {
+											mui.openWindow({
+												url:'../../html/chatroom.html',
+												extras:{
+													name:this.remark,
+													headpic:this.src,
+													user_id:this.id,
+													newnum:this.newnum
+												}
+											});
+										});
+									}
+									
+								}
+							}else{
+								var admin_remark=dictRes[resType]["contact007"];
+								var adminsrc='../../img/web2.png';
+								local =JSON.parse(local);
+								var ben = local.slice(0);  
+								for(i=0; i<net.length; i++){
+									for(j=0; j<local.length; j++){
+										if(local[j].id == net[i].id){
+											net[i].remark = local[j].remark;
+											net[i].src =local[j].src;
+											ben.splice(ben.indexOf(local[j]),1);
+										}
+									}
+								}
+								for(var q=0;q<ben.length;q++){
+									ben[q].id=ben[q].id;
+								}
+								arr = net.concat(ben);
+								console.log(JSON.stringify(arr)+'111111111111');
+								var ul= document.getElementById("list_ul");
+								/*
+								 * 生成列表
+								 */
+								for(var n=0;n<arr.length;n++){
+									if(arr[n].id==admin){
+										console.log("3333333333333333333333333333333344");
+										console.log(JSON.stringify(arr));
+										var user_id =arr[n].id.substr(0,25)+'...';
+										console.log(n);
+										if('remark' in arr[n]){
+											var user_remark=arr[n].remark;
+										}else{
+//											var user_remark=dictRes[resType]["addnode011"];
+											var user_remark=dictRes[resType]["contact007"];
+										}
+										
+										if('src' in arr[n]){ 
+											var src =arr[n].src;
+										}else{
+											var src='../../img/web2.png';
+										}
+										var li = document.createElement("li");
+										li.id=arr[n].id;
+										li.remark=admin_remark;
+										li.src=adminsrc;
+										li.className='mui-table-view-cell';
+										getChatNum(arr[n].id, li);
+										if(chatNum == true){
+											console.log(chatNum);
+											console.log("有");
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div><span class="isread">未读消息</span>';
+										}else{
+											console.log(chatNum);
+											console.log("无");																		
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div>';
+										}
+										console.log(li.newnum);
+										ul.appendChild(li);
+										listnone();
+										li.addEventListener('tap',function() {
+											mui.openWindow({
+												url:'../../html/chatroom.html',
+												extras:{
+													name:this.remark,
+													headpic:this.src,
+													user_id:this.id,
+													newnum:this.newnum
+												}
+											});
+										});
+									}else{
+										console.log("3333333333333333333333333333333333"+admin);
+										console.log(JSON.stringify(arr));
+										var user_id =arr[n].id.substr(0,25)+'...';
+										console.log(n);
+										if('remark' in arr[n]){
+											var user_remark=arr[n].remark;
+										}else{
+											var user_remark=dictRes[resType]["addnode011"];
+										}
+										
+										if('src' in arr[n]){
+											var src =arr[n].src;
+										}else{
+											var src='../../img/i5.png';
+										}
+										var li = document.createElement("li");
+										li.id=arr[n].id;
+										li.remark=user_remark;
+										li.src=src;
+										li.className='mui-table-view-cell';
+										getChatNum(arr[n].id, li);
+										if(chatNum == true){
+											console.log(chatNum);
+											console.log("有");
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div><span class="isread">未读消息</span>';
+										}else{
+											console.log(chatNum);
+											console.log("无");																		
+											li.innerHTML='<div class="mui-slider-cell"><div class="oa-contact-cell mui-table"><div class="oa-contact-avatar mui-table-cell"><img src="'+src+'" /></div><div class="oa-contact-content mui-table-cell"><div class="mui-clearfix"><h4 class="oa-contact-name">'+user_remark+'</h4></div><p class="oa-contact-email mui-h6">'+user_id+'</p></div></div></div>';
+										}
+										console.log(li.newnum);
+										ul.appendChild(li);
+										listnone();
+										li.addEventListener('tap',function() {
+											mui.openWindow({
+												url:'../../html/chatroom.html',
+												extras:{
+													name:this.remark,
+													headpic:this.src,
+													user_id:this.id,
+													newnum:this.newnum
+												}
+											});
+										});
+									}
+									
+								}
+							}
+							
+	//						console.log(datas);
+							console.log(JSON.stringify(data));
+						}
+						if(data.cbm=='ERR'){
+							if(data.cms=="RSE010"){
+//								mui.toast(dictRes[resType]["RSE010"]);
+							console.log("联系人列表为空");
+							}
+							getDatalist();
+							
+						} 
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					} 
+				}); 
+			}
+			
+			
+			//下拉刷新
+			function pulldownRefresh() {
+				location.reload();
+				console.log("ok"); 
+//				mui.fire(plus.webview.getWebviewById('account.html'),'refreshbadge');
+				mui('#scroll').pullToRefresh().endPullDownToRefresh();
+				mui('#scroll').pullToRefresh().refresh(true);
+			};
+			
+			
+			
+			//二维码添加
+			document.getElementById("add_p").addEventListener("tap",function(){
+			mui.openWindow({
+				url: '../../html/add_person.html' 
+			});
+		});
+		//快速查找
+			document.getElementById("quick_search").addEventListener('keyup',function(){
+				var name=document.getElementById("quick_search").value;
+				console.log("ok"+name);
+				var lis =document.getElementById("list_ul").getElementsByTagName('li');
+				console.log(lis.length);
+	//			var toname= lis[0].getElementsByTagName('h4')[0].innerText;
+	//			console.log(toname);
+				for(var i=0;i<lis.length;i++){
+					var toname=lis[i].getElementsByTagName('h4')[0].innerText;
+					if(toname.match(name)){
+						lis[i].style.display='';
+						console.log('显示所有人');
+					}else{
+						lis[i].style.display='none';
+					}
+				}
+			});
+			//快速查找函数
+			function ischeck(){
+				var name=document.getElementById("quick_search").value;
+				console.log("ok"+name);
+				var lis =document.getElementById("list_ul").getElementsByTagName('li');
+				console.log(lis.length);
+	//			var toname= lis[0].getElementsByTagName('h4')[0].innerText;
+	//			console.log(toname);
+				for(var i=0;i<lis.length;i++){
+					var toname=lis[i].getElementsByTagName('h4')[0].innerText;
+					if(toname.match(name)){
+						lis[i].style.display='';
+						console.log('显示所有人');
+					}else{
+						lis[i].style.display='none';
+					}
+				}
+			}
+//			document.getElementById("setting").addEventListener("tap",function(){
+//				mui.openWindow({
+//					url: '../gesture_psw.html',
+//					id:"gesture_psw",
+//					extras:{
+//				    	from: "contact"
+//				    }
+//				});
+//			});
+		
+		/*
+		 * 列表为空
+		 */
+		function listnone(){
+			var lis= document.getElementById("list_ul").getElementsByTagName('li');
+			console.log(lis.length);
+			if(lis.length>0){
+				document.getElementById("none").style.display='none';
+				document.getElementById("add_person").style.display='none';
+			}else{
+				document.getElementById("none").style.display='block';
+				document.getElementById("add_person").style.display='block';
+			}
+		}
+		window.addEventListener('reloadlist', function(){
+		console.log('转账传值');
+		location.reload();
+	
+		});
+		/*
+		 * 获取聊天条数
+		 */
+		function getChatNum(target, li){
+			var oldnum= plus.storage.getItem(target);
+			if(!oldnum){
+				chatNum = false;
+				li.newnum = 0;
+			}
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM020",
+				"addr":act,
+				"pwd":pwd,
+				"target":target
+			};
+			argin = JSON.stringify(argin);
+			console.log(argin);
+			mui.ajax(url + "api", {
+				async:false,
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						var newnum=data.cms;
+						console.log(oldnum);
+						console.log(newnum);  
+						if(newnum>oldnum){
+							console.log("有新消息");
+							chatNum = true;
+							li.newnum = newnum;
+						}else{
+							chatNum = false;
+							li.newnum = oldnum;
+						}
+								
+					}else if(data.cbm=="ERR"){
+						if(data.cms=="RSE002"){
+							mui.toast(dictRes[resType]["RSE002"]);
+						}else if(data.cms=="RSE004"){
+							mui.toast(dictRes[resType]["RSE004"]);
+						}
+					}
+						
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast(dictRes[resType]["allPage003"]);
+					console.log(type);
+				}
+			});
+		
+		}
+</script>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <link href="../../css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="../../css/mui.picker.all.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/account.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/pullToRefresh.material.css"/>
+    
+</head>
+<body>
+	<div id="account_header" class="mui-bar mui-bar-nav">
+		<a id="logout" class="mui-pull-left">
+			<img src="../../img/quit.png" />
+		</a>
+		<h4 id="Account" class="mui-title">账户</h4>
+		<a id="setting" class="mui-icon mui-icon-gear mui-pull-right"></a>
+	</div>
+	<div id="bigqr">
+			<p id="MyQR">我的二维码名片</p>
+			<img id="myQR" src="../../img/9.png"/>
+			<a id="close_mask" class="mui-icon mui-icon-closeempty" ></a>
+	</div>
+	<div class="mui-content mui-scroll-wrapper">
+		<div id="scroll" class="mui-scroll">
+				<div id="qrcode"> 
+					<div class="qrpic">
+						<div id="qrpic_content"><span id="accAddr">账号地址</span><span id="qrspan"></span><img id="qrcopy" src="../../img/copy_logo.png" /><img id="qr" src="../../img/9.png" /></div>
+						<div id="balance_div">
+							<span id="freshMoney">资金余额</span>
+							<label><img id="money_img" src="../../img/money_logo.png"/><span id="resetMoney" ></span><img id="eyes"  src="../../img/11.png"/></label>
+						</div>
+						<div class="content mui-bar-tab">
+						<a id="recharge" href="#recharge_content" class="mui-tab-item mui-active"><div><img src="../../img/14.png"/></div><span id="in">充值</span><img id="recharge_jiao" src="../../img/15.png"/></a>
+						<a id="cash" href="#cash_content" class="mui-tab-item"><div><img src="../../img/13.png"/></div><span id="out">提现</span><img id="cash_jiao"  src="../../img/15.png"/></a>
+						<a id="transfer" href="#transfer_content" class="mui-tab-item"><div><img src="../../img/12.png"/></div><span id="CM">转账</span><img id="transfer_jiao" src="../../img/15.png"/></a>
+						</div> 
+					</div>
+				</div>
+			
+				<div id="recharge_content" class="mui-control-content mui-active">
+					<span id="TS">请将以太币转到如下地址，并备注账号信息</span>
+					<div id="myqr_content"></div>
+					<p id="myqr">点击复制</p>
+					<div id="proportion"></div>
+				</div>
+				<div id="cash_content" class="mui-control-content">
+					<input id="cash_moneny" type="tel" placeholder="提现金额" onkeyup='this.value=this.value.replace(/\D/gi,"")'/>
+					<textarea id="cash_id" placeholder="提现地址"></textarea>
+					<button id='cash_button'>确认提现</button>
+				</div>
+				<div id="transfer_content" class="mui-control-content">
+				<div style="display: none;">
+					联系人选择 :
+					<label></label>
+					<a class="mui-icon mui-icon-arrowright"></a>
+				</div>
+				
+				<div id="transfer_pick">
+					<input type="text" id="pick_name" placeholder="转给" />
+					<img id="qr_check" src="../../img/b2.png"  />
+					<img id='pick'  src="../../img/16.png"/>
+				</div>
+				<div id="transfer_input"><input id="tomoney" type="tel" placeholder="转账金额" onkeyup='this.value=this.value.replace(/\D/gi,"")'/></div>
+				<div id="transfer_msg"><textarea id="t_msg"  placeholder="转账留言"></textarea></div>
+				<button id="transfer_accounts">确认转账</button>
+				</div>
+		</div>
+	</div>
+</body>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/mui.picker.all.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/mui.pullToRefresh.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/mui.pullToRefresh.material.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/changelanguage/chinese.js"></script>
+<script src="../../js/changelanguage/english.js"></script>
+<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+<script src="../../js/changelanguage/Korean.js"></script>
+<script src="../../js/changelanguage/Japanese.js"></script>
+<script src="../../js/changelanguage/Tibetan.js"></script>
+<script src="../../js/changelanguage/changeLanguage.js"></script>
+<script src="../../js/backquit.js"></script>
+<script type="text/javascript">
+	var mask, act, pwd, url, transfer_money, toact, tomoney, t_msg, hash;//act:账号；
+	var pick;
+	var arr=[];
+	var releaseData=[];
+	var QRcontent, MYQRcontent;
+	var resType;
+	var rate;//rate:汇率
+	var fresh_from = "first";
+	var pubact;//官方以太币账户
+	mui.plusReady(function() { 
+		//语言切换
+		if(plus.storage.getItem("language")){
+			resType = plus.storage.getItem("language");
+		}else{
+			resType = "CHINESE";
+		}
+		var changeLan = [{"TID":"Account","RID":"account001","ATYPE":1},
+						{"TID":"MyQR","RID":"account002","ATYPE":1},
+						{"TID":"accAddr","RID":"account003","ATYPE":1},
+						{"TID":"freshMoney","RID":"account004","ATYPE":1},
+						{"TID":"in","RID":"account005","ATYPE":1},
+						{"TID":"out","RID":"account006","ATYPE":1},
+						{"TID":"CM","RID":"account007","ATYPE":1},
+						{"TID":"TS","RID":"account008","ATYPE":1},
+						{"TID":"myqr","RID":"account009","ATYPE":1},
+						{"TID":"cash_moneny","RID":"account011","ATYPE":2},
+						{"TID":"cash_id","RID":"account012","ATYPE":2},
+						{"TID":"cash_button","RID":"account013","ATYPE":1},
+						{"TID":"pick_name","RID":"account014","ATYPE":2},
+						{"TID":"tomoney","RID":"account015","ATYPE":2},
+						{"TID":"t_msg","RID":"account016","ATYPE":2},
+						{"TID":"transfer_accounts","RID":"account017","ATYPE":1}]
+		resReplace(resType, changeLan);
+				
+		url = plus.storage.getItem("url");
+		pwd = plus.webview.getWebviewById("home").pwd;
+		act = plus.storage.getItem("account");
+		console.log(act);
+		//二维码放大
+		mask=mui.createMask(function(){
+			document.getElementById("bigqr").style.display='none';
+		});
+		document.getElementById("qr").addEventListener('tap',function(){
+			mask.show();
+			document.getElementById("bigqr").style.display='block';
+		});	
+		document.getElementById("close_mask").addEventListener('tap',function(){
+			mask.close();
+		});
+		//联系人选择设置
+		pick = new mui.PopPicker({
+			layer: 1
+		});
+		//设置
+		document.getElementById("setting").addEventListener('tap',function(){
+			mui.openWindow({
+				url: "setting.html"
+			});
+		});
+		/*
+		 * 转账手势验证
+		 */
+		document.getElementById("transfer_accounts").addEventListener("tap",function(){
+			toact=document.getElementById("pick_name").value;
+			console.log('转账地址'+toact);
+			tomoney=document.getElementById("tomoney").value;
+			console.log("转账金额"+tomoney);
+			t_msg = document.getElementById("t_msg").value;
+			if(document.getElementById("pick_name").value==''){
+				mui.toast(dictRes[resType]["account020"]);
+			}else if(document.getElementById("tomoney").value==''){
+				mui.toast(dictRes[resType]["account021"]);
+			}else{
+			mui.openWindow({
+				url: "../gesture_psw.html",
+				extras: {
+					from:'transfer'
+				}
+			});	
+			}
+			
+		});
+		//提现手势验证
+		document.getElementById("cash_button").addEventListener('tap',function(){
+			if(document.getElementById("cash_moneny").value==''){
+				mui.toast(dictRes[resType]["account018"]);
+			}else if(document.getElementById("cash_moneny").value%rate !=0 || document.getElementById("cash_moneny").value == 0){
+				mui.toast(dictRes[resType]["account026"]);
+			}else if(document.getElementById("cash_id").value==''){
+				mui.toast(dictRes[resType]["account019"]);
+			}else{
+				var btnArray = [dictRes[resType]["allPage012"], dictRes[resType]["allPage013"]];
+				mui.confirm(dictRes[resType]["account027"]+document.getElementById("cash_id").value+'?', dictRes[resType]["allPage011"], btnArray, function(e) {
+						if(e.index==0){
+						mui.openWindow({
+							url: "../gesture_psw.html",
+							extras: {
+								from:'cash'		
+							}
+						});
+						}else{
+							return;
+						}
+						
+					});
+			}
+		});
+		document.getElementById("qr_check").addEventListener('tap',function(){
+			mui.openWindow('qr_check.html'); 
+		});
+		/*
+		 * 金额显示
+		 */
+		document.getElementById("eyes").addEventListener('tap',function(){
+			var open=document.getElementById("eyes");
+			if(open.src.indexOf("11.png")>0){
+				open.src='../../img/10.png';
+				document.getElementById("resetMoney").innerText='----';
+			}else{
+				open.src='../../img/11.png';
+				freshMoney();
+				
+			}
+		});
+
+		getEthCloudSystem();
+		getName();
+		getQR();
+		tapchange();
+		freshTap();//余额刷新
+		initpullaction();
+		freshMoney(); 
+	});
+	function initpullaction() {
+			//阻尼系数
+			var deceleration = mui.os.ios ? 0.003 : 0.0009;
+			mui('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, //是否显示滚动条
+				deceleration: deceleration
+			});
+			mui('#scroll').pullToRefresh({
+				down: {
+					callback: pulldownRefresh
+				}
+			});
+			};
+	//下拉刷新
+		function pulldownRefresh() {
+				freshMoney();
+				console.log("ok"); 
+				document.getElementById("eyes").src="../../img/11.png";
+//				mui.fire(plus.webview.getWebviewById('account.html'),'refreshbadge');
+				mui('#scroll').pullToRefresh().endPullDownToRefresh();
+				mui('#scroll').pullToRefresh().refresh(true);
+		};		
+	//tab标签底部
+	function tapchange(){
+		document.getElementById("recharge").addEventListener('tap',function(){
+			document.getElementById("recharge_jiao").style.display='block';
+			document.getElementById("cash_jiao").style.display='none';
+			document.getElementById("transfer_jiao").style.display='none';
+		});
+		document.getElementById("cash").addEventListener('tap',function(){
+			document.getElementById("recharge_jiao").style.display='none';
+			document.getElementById("cash_jiao").style.display='block';
+			document.getElementById("transfer_jiao").style.display='none';
+		});
+		document.getElementById("transfer").addEventListener('tap',function(){
+			document.getElementById("recharge_jiao").style.display='none';
+			document.getElementById("cash_jiao").style.display='none';
+			document.getElementById("transfer_jiao").style.display='block';
+		});
+	}
+	//获取联系人
+	function getremark(){
+		
+		var data=plus.storage.getItem('jsonst');
+		if(!data){
+//			mui.toast('您还未保存联系人');
+			return
+		}
+		console.log("2"+data);
+		data=JSON.parse(data);
+		for(var i =0;i<data.length;i++){
+			var datalist={
+				'name':data[i].remark,
+				'id':data[i].id
+			}
+			arr.push(datalist);
+
+		}
+		console.log(JSON.stringify(arr));
+	}
+	function getName(){
+		console.log("1");
+		getremark();
+		var pickbutton =document.getElementById("pick");
+		for(var i=0;i<arr.length;i++){
+		releaseData.push({
+			value: arr[i].id,
+			text: arr[i].name
+		});
+		}
+		console.log("3");
+//		document.getElementById("pick").firstElementChild.innerText = releaseData[0].text;
+		pick.setData(releaseData);
+		pickbutton.addEventListener('tap',function(){
+//			pick.show(function(items) {
+////				pickbutton.firstElementChild.innerText = items[0].text;
+//				document.getElementById("pick_name").value='';
+//				document.getElementById("pick_name").value=items[0].value;
+////				release_direction = items[0].value;
+//				//返回 false 可以阻止选择框的关闭
+//				//return false;
+//			});
+		mui.openWindow('account_list.html');
+		});
+	}
+	//复制二维码地址
+	function getQR(){
+		
+		document.getElementById("qrcopy").addEventListener('tap',function(){
+			console.log("ok");
+			QRcontent=act;
+			if(plus.os.name == 'Android'){
+					var Context = plus.android.importClass("android.content.Context");
+    				var main = plus.android.runtimeMainActivity();
+    				var clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+//  				alert(contentText);
+   					plus.android.invoke(clip,"setText",QRcontent);
+				}
+				else{
+					var UIPasteboard  = plus.ios.importClass("UIPasteboard");
+					//这步会有异常因为UIPasteboard是不允许init的，init的问题会在新版中修改
+					var generalPasteboard = UIPasteboard.generalPasteboard();
+					// 设置/获取文本内容:
+					generalPasteboard.setValueforPasteboardType(QRcontent, "public.utf8-plain-text");
+					var value = generalPasteboard.valueForPasteboardType("public.utf8-plain-text");
+				}
+   				mui.toast(dictRes[resType]["account022"]);
+
+			});
+			document.getElementById("myqr").addEventListener('tap',function(){
+				MYQRcontent = pubact;
+				console.log("ok");
+				if(plus.os.name == 'Android'){
+					var Context = plus.android.importClass("android.content.Context");
+    				var main = plus.android.runtimeMainActivity();
+    				var clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+//  				alert(contentText);
+   					plus.android.invoke(clip,"setText",MYQRcontent);
+				}
+				else{
+					var UIPasteboard  = plus.ios.importClass("UIPasteboard");
+					//这步会有异常因为UIPasteboard是不允许init的，init的问题会在新版中修改
+					var generalPasteboard = UIPasteboard.generalPasteboard();
+					// 设置/获取文本内容:
+					generalPasteboard.setValueforPasteboardType(MYQRcontent, "public.utf8-plain-text");
+					var value = generalPasteboard.valueForPasteboardType("public.utf8-plain-text");
+				}
+   				mui.toast(dictRes[resType]["account022"]);
+
+			});
+	}
+	/*
+	 * 退出app
+	 */
+	document.getElementById("logout").addEventListener("tap",function(){
+		var btnArray = [dictRes[resType]["allPage012"],dictRes[resType]["allPage013"]];
+		mui.confirm(dictRes[resType]["account023"], dictRes[resType]["allPage011"], btnArray, function(e) {
+			if (e.index == 0) {
+				plus.runtime.quit();
+			} else {
+				return;
+			}
+		});
+	});
+	/*
+	 * 获取当前账号二维码
+	 */
+	function getmyQR(){
+		argin = {
+			"version":"0.0.3",
+			"codein":"BM003",
+			"addr":act
+		};
+		argin = JSON.stringify(argin); 
+		document.getElementById("myQR").src = url + "api?argin=" + argin;
+	}
+	/*
+	 * 用户转账
+	 */
+	function transfer(){
+		
+		argin = {
+			"version":"0.0.3",
+			"codein":"BM007",
+			"from":act,
+			"frompwd":pwd,
+			"to":toact,
+			"money":tomoney,
+			"msg":t_msg
+		};
+		argin = JSON.stringify(argin);
+		console.log(argin);
+		mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						if(act==document.getElementById("pick_name").value){
+							document.getElementById("pick_name").value = "";
+							document.getElementById("tomoney").value = "";
+							document.getElementById("t_msg").value="";
+							mui.toast(dictRes[resType]["RSE004"]);
+						}
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							document.getElementById("pick_name").value = "";
+							document.getElementById("tomoney").value = "";
+							document.getElementById("t_msg").value="";
+							mui.toast(dictRes[resType]["account024"]);  
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE002"){
+								mui.toast(dictRes[resType]["RSE002"]);
+							}else if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}else if(data.cms=="RSE005"){
+								mui.toast(dictRes[resType]["RSE005"]);
+							}
+						}
+		
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+		
+	}
+	/*
+	 * 用户提现请求
+	 */
+	function cash(){
+		var to_money=document.getElementById("cash_moneny").value;
+		var to_id =document.getElementById("cash_id").value;
+		argin = {
+			"version":"0.0.3",
+			"codein":"BM025",
+			"addr":act,
+			"pwd":pwd,
+			"money":to_money,
+			"target":to_id
+		};
+		console.log(act);
+		console.log(pwd);
+		console.log(JSON.stringify(argin));
+		argin=JSON.stringify(argin);
+		mui.ajax(url + "api", {
+			data: {
+				argin: argin
+			},
+			dataType: 'json',
+			type: 'get',
+			timeout: 10000,
+			success: function(data) {
+				if(data.cbm=="OK"){
+					document.getElementById("cash_id").value='';
+					document.getElementById("cash_moneny").value='';
+					freshMoney();
+					mui.fire(plus.webview.getWebviewById('html/Transaction/transaction.html'),'reloadlist');
+					mui.toast(dictRes[resType]["allPage022"]);
+				}else if(data.cbm=="ERR"){
+					if(data.cms=="RSE002"){
+						mui.toast(dictRes[resType]["RSE002"]);
+					}else if(data.cms=="RSE005"){
+						mui.toast(dictRes[resType]["RSE005"]);
+					}
+					else if(data.cms=="RSE015"){
+						mui.toast(dictRes[resType]["RSE015"]);
+					}else if(data.cms=="RSE004"){
+						mui.toast(dictRes[resType]["RSE004"]);
+					}
+					console.log(JSON.stringify(data));
+				}
+			},
+			error: function(xhr, type, errorThrown) {
+				mui.toast(dictRes[resType]["allPage003"]);
+				console.log(type);
+			}
+		});
+	}
+	/*
+	 * 余额刷新
+	 */
+	function freshTap(){
+		document.getElementById("freshMoney").addEventListener("tap",function(){
+			freshMoney();
+		});
+	}
+	function freshMoney(){
+		argin = {
+			"version":"0.0.3",
+			"codein":"BM005",
+			"addr":act,
+			"pwd":pwd
+		};
+		console.log(act);
+		console.log(pwd);
+		argin = JSON.stringify(argin);
+		mui.ajax(url + "api", {
+			data: {
+				argin: argin
+			},
+			dataType: 'json',
+			type: 'get',
+			timeout: 10000,
+			success: function(data) {
+				console.log(JSON.stringify(data));
+				console.log(data.cms);
+				if(data.cbm == "OK"){
+					plus.storage.setItem("resetMoney",data.cms + "");
+					rate = JSON.parse(data.cms).rate;
+					console.log(plus.storage.getItem("resetMoney"));
+					if(document.getElementById("resetMoney").innerText==JSON.parse(data.cms).money){
+						console.log(document.getElementById("resetMoney").innerText);
+						if(fresh_from == "home" || fresh_from == "chatroom" || fresh_from == "first"){
+							fresh_from = "account";
+							console.log(fresh_from);
+						}else{ 
+							mui.toast(dictRes[resType]["account025"]);
+						}
+					}
+					document.getElementById("resetMoney").innerText = JSON.parse(data.cms).money;
+					document.getElementById("proportion").innerText = dictRes[resType]["account010"]+JSON.parse(data.cms).rate;
+//					act = JSON.parse(data.cms).ahash;
+					getmyQR();//获取当前登录账号二维码 3
+					document.getElementById("qrspan").innerText = " " + act.substr(0,20)+'...';
+				}else{
+					mui.toast(dictRes[resType]["RSE002"]);
+				}
+			},
+			error: function(xhr, type, errorThrown) {
+				mui.toast(dictRes[resType]["allPage003"]);
+				console.log(type);
+			}
+		});
+	}
+	
+	/*
+	 * 系统以太币地址
+	 */
+	function getEthCloudSystem(){
+		argin = {
+			"version":"0.0.3",
+			"codein":"BM008"
+		};
+		argin = JSON.stringify(argin);
+		mui.ajax(url + "api", {
+			data: {
+				argin: argin
+			},
+			dataType: 'json',
+			type: 'get',
+			timeout: 10000,
+			success: function(data) {
+				console.log(JSON.stringify(data));
+				if(data.cbm == "OK"){
+					var cms = JSON.parse(data.cms);
+					pubact = JSON.parse(cms.addr).eth;
+					document.getElementById("myqr_content").innerText = pubact;
+					var vips=JSON.parse(cms.addr).aaddr;
+					plus.storage.setItem("admin",vips);
+					console.log("====================================================" + cms.addr);
+				}else{
+					mui.toast(dictRes[resType]["allPage003"]);
+				}
+			},
+			error: function(xhr, type, errorThrown) {
+				mui.toast(dictRes[resType]["allPage003"]);
+				console.log(type);
+			}  
+		});
+	}
+	
+	window.addEventListener('refreshbadge', function(e){
+		console.log('转账传值');
+		var id=JSON.stringify(e.detail.id);
+		id=JSON.parse(id);
+		document.getElementById("pick_name").value='';
+		document.getElementById("pick_name").value=id;
+	
+		});
+	/*
+	 * 点击跳转到当前页面刷新
+	 */
+	window.addEventListener("sendFresh",function(e){
+		console.log("1111111111");
+		fresh_from = e.detail.from;
+		freshMoney();
+	});
+	/*
+	 * 提现
+	 */
+	window.addEventListener("cash",function(e){
+		console.log('提现');
+		cash();
+	});
+	/*
+	 * 手势密码验证转账
+	 */
+	window.addEventListener('transfer',function(){
+		console.log("转账");
+		transfer();
+	})
+	/*
+	 * 页面滚动
+	 */
+	var resizeTimer = null;
+	window.onresize = function(){
+	   resizeTimer = resizeTimer ? null : setTimeout(doResize,0);
+	}
+	function doResize(){
+		var resize = null; 
+	   	resize = resize ? null : mui('.mui-scroll-wrapper').scroll().scrollTo(0,-200,100);
+	}
+</script>
+</html>

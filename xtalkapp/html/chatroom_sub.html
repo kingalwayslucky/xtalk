@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title> </title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/message_us.css"/>
+	</head>
+
+	<body>
+		<!--下拉刷新容器-->
+		<div id="pullrefresh" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<!--数据列表-->
+				<!--<ul class="mui-table-view mui-table-view-chevron">
+					
+				</ul>-->
+				<div id="chat_list_div">
+					<!--<div id="clock" class="chat_time">
+						2016年03月13日15:00
+					</div>
+					<div class="my_send_div chat_div">
+						<img class="head_pic" src="../img/myhead.jpg" />
+						<div class="nameandcontent">
+							<p class="name"></p>
+							<div class="content">
+								<div class="jian"></div>
+								周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。
+							</div>
+						</div>
+					</div>
+					<div class="other_send_div chat_div">
+						<img class="head_pic headpic" src="../img/headpic_1.jpg" />
+						<div class="nameandcontent">
+							<p class="name mark"></p>
+							<div class="content">
+								<div class="jian"></div>
+								有啊，正愁周末没事干。
+							</div>
+						</div>
+					</div>
+					<div class="my_send_div chat_div">
+						<img class="head_pic" src="../img/myhead.jpg" />
+						<div class="nameandcontent">
+							<p class="name"></p>
+							<div class="content">
+								<div class="jian"></div>
+								行，周末见。
+							</div>
+						</div>
+					</div>
+					<div class="other_send_div chat_div">
+						<img class="head_pic headpic" src="" />
+						<div class="nameandcontent">
+							<p class="name mark"></p>
+							<div class="content">
+								<div class="jian"></div>
+								好的
+							</div>   
+						</div>
+					</div>-->
+					<!--<p id="history_p">查看更多历史</p>-->
+				</div>
+				
+					
+			</div>
+			<nav id="nav" class="mui-bar"> 
+				<div id="zhuan"><img src="../img/+3.png"/></div>
+				<input id="text_input" type="text" placeholder="说些什么吧……" />
+				<div id="send_btn"><img src="../img/+4.png"/></div>
+			</nav>
+			<div id="f_mask">
+				<div id="mask_div">
+					<div>
+						<p id="Mon" style="color:red;"><span id="ZZ">转账</span><img id="Mon_bot" src="../img/Indexx.png" style="width: 100%;display: block;"/></p>
+						<p id="Mes"><span id="XX">消息购买</span><img id="Mes_bot" src="../img/Indexx.png" style="width: 100%;display: none;"/></p>
+					</div>
+					<div id="MonC">
+						<input id="zname" type="text" readonly="readonly"/>
+						<input id="zmoney"  type="tel" placeholder="金额" />
+						<input id="zmsg" type="text"  placeholder="留言">
+						<button id="zbutton">确认转账</button>
+					</div>
+					<div id="MesC">
+						<div id="msg_num"></div>
+						<div id="sub">-</div>
+						<input id="num_money" type="tel" style="text-align: center;"/>
+						<div id="add">+</div>
+						<div id="num_in"><span id="KGM">可购买：</span>50<span id="T">条</span></div>
+						<div id="num_ratio"><table>
+							<tr><td id="redborder"><img src="../img/money_logo.png"/> 5</td><td><img src="../img/money_logo.png"/> 8</td></tr>
+							<tr><td><img src="../img/money_logo.png"/> 10</td><td><img src="../img/money_logo.png"/> 20</td></tr>
+						</table></div>
+						<button id="num_button">确认购买</button>
+					</div>
+					<a id="zclose" class="mui-icon mui-icon-close" ></a>
+				</div>
+			</div>
+			
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/changelanguage/chinese.js"></script>
+		<script src="../js/changelanguage/english.js"></script>
+		<script src="../js/changelanguage/TraditionalChinese.js"></script>
+		<script src="../js/changelanguage/Korean.js"></script>
+		<script src="../js/changelanguage/Japanese.js"></script>
+		<script src="../js/changelanguage/Tibetan.js"></script>
+		<script src="../js/changelanguage/changeLanguage.js"></script>
+		<script>
+			var pwd, url, act, message_num, user_id, chat_list, user_id;//user_id:对方账号
+			var isActive, from, money_nums, msg;//isActive:是否自动解码;from:来自消息发送还是消息列表；money_nums:购买消息金钱数
+			var start, start_down, msg_pwd, mid, cmses, chats, headpic, names;//刷新初始位置
+			var count = "4"; 
+			var count_down = "4";
+			var resType;
+			var in_num = 0;//进入页面获取数据提示
+			mui.plusReady(function() {
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"text_input","RID":"chatroomSub001","ATYPE":2},
+								{"TID":"ZZ","RID":"chatroomSub002","ATYPE":1},
+								{"TID":"XX","RID":"chatroomSub003","ATYPE":1},
+								{"TID":"zmoney","RID":"chatroomSub004","ATYPE":2},
+								{"TID":"zmsg","RID":"chatroomSub005","ATYPE":2},
+								{"TID":"zbutton","RID":"chatroomSub006","ATYPE":1},
+								{"TID":"num_button","RID":"chatroomSub009","ATYPE":1},
+								{"TID":"KGM","RID":"chatroomSub007","ATYPE":1},
+								{"TID":"T","RID":"chatroomSub008","ATYPE":1}]
+				resReplace(resType, changeLan);
+				
+				url = plus.storage.getItem("url");
+				act = plus.storage.getItem("account");
+				console.log(url);
+				pwd = plus.webview.getWebviewById("home").pwd;
+				isActive = plus.storage.getItem("isActive");
+				user_id = plus.webview.currentWebview().user_id;
+				headpic = plus.webview.currentWebview().headpic;
+				console.log("=====================================>"+headpic)
+				names = plus.webview.currentWebview().name;
+				document.getElementById("zname").value=names;//转账对方名字
+				chat_list = document.getElementById("chat_list_div");
+				getMessageNum();
+				tapChange();
+				if(message_num<=count){ 
+					start = "0";
+				}else{
+					start = message_num - count; 
+				}
+				console.log(message_num + " " + start)
+				if((message_num - count_down) > 0 && (message_num - count_down) < count_down){
+					console.log("11111111111");
+					start_down = "0";
+					count_down = message_num - count_down;
+				}else{
+					start_down = message_num - count_down - count_down;
+				}
+				getMessagelist();
+				codeMessage()
+			});
+			mui.init({
+				pullRefresh: { 
+					container: '#pullrefresh',
+					down: {
+						callback: getMessageListDown,
+						contentdown: "",
+						contentover: "",
+						contentrefresh: ""
+					},
+					up: {
+						contentrefresh: "",
+						callback: getMessagelist,
+						contentdown: ''
+					}
+				}
+			});  
+			/*
+			 * 消息解码
+			 */
+			function codeMessage(){
+				(function($, doc) {
+					$.init({
+					  	gestureConfig:{
+						   	longtap: true, //默认为false
+					  	}
+					});
+					$('#chat_list_div').on('longtap', '.chat_div', function(event) {
+						div = this;
+						if(div.from != act){
+							mui.toast(dictRes[resType]["RSE011"]);
+							return;
+						}
+						mui.confirm(dictRes[resType]["allPage010"], dictRes[resType]["allPage011"], btnArray, function(e) {
+							if (e.index == 0) {
+								deleteMsg();
+							} else {
+								return; 
+							}
+						});
+					});
+					var btnArray = [dictRes[resType]["allPage012"],dictRes[resType]["allPage013"]]; 
+					$('#chat_list_div').on('tap', '.chat_div', function(event) {
+						div = this;
+						if(this.code==1){
+							return
+						}
+						if(isActive != 1){
+							mui.openWindow({
+								url: "gesture_psw.html",
+								extras: {
+									from:'Msglist'
+								}
+							});
+						}
+					});
+				})(mui, document);  
+			}
+			
+			/*
+			 * 消息条数
+			 */
+			function getMessageNum(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM020",
+					"addr":act,
+					"pwd":pwd,
+					"target":user_id
+				};
+				argin = JSON.stringify(argin); 
+				console.log(argin);
+				mui.ajax(url + "api", {
+					async:false,
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) { 
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							message_num = data.cms;
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}
+							
+						}
+					}, 
+					error: function(xhr, type, errorThrown) {
+//						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					} 
+				});
+			}
+			/*
+			 * 获取消息列表（上拉加载）
+			 */
+			function getMessagelist(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM015",
+					"addr":act,
+					"pwd":pwd,
+					"target":user_id,
+					"start":start,  
+					"count":count  
+				};
+				console.log(count);
+				argin = JSON.stringify(argin); 
+				console.log(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin   
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){ 
+							in_num = 1;
+							start = parseInt(start) + parseInt(count);
+							var cms = JSON.parse(data.cms);
+							var msgs_length = cms.msgs.length;
+							for(i=0; i<msgs_length; i++){
+								var from_addr = cms.msgs[i].from;
+								msg_pwd = cms.msgs[i].msg;
+								var msgdate = cms.msgs[i].date;
+								var idx = cms.msgs[i].idx;
+								var msg_divs = document.createElement("div");
+								msg_divs.mid = msg_pwd;
+								msg_divs.idx = idx;
+								msg_divs.from = from_addr;
+								if(isActive == 1){
+									inputPsw();
+								}
+								console.log(act);
+								console.log(from_addr);
+								if(from_addr == act){
+									console.log("1111111111111111111111111111111111111111111");
+									msg_divs.className = "my_send_div chat_div";
+									msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic" src="../img/myhead.jpg" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+									chat_list.appendChild(msg_divs);
+								}else{
+									msg_divs.className = "other_send_div chat_div";
+									msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic headpic" src="" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+									chat_list.appendChild(msg_divs);
+								}
+							} 
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh();
+//							mui('.mui-scroll-wrapper').scroll().scrollToBottom(10);
+							chats= document.getElementById("pullrefresh").getElementsByClassName('content');
+							headTihuan();
+						}else if(data.cbm == "ERR"){
+							if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}
+							if(data.cms=="RSE014" && in_num == 1){
+								chat_list.innerHTML = "";
+								mui.toast(dictRes[resType]["RSE014"]);
+							}
+							getMessageNum();
+							console.log(start);
+							console.log(message_num);
+							if(start >= message_num && in_num == 1 && data.cms != "RSE014"){
+								mui.toast(dictRes[resType]["transaction012"]);
+							}
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(); 
+//							mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+						}
+					}, 
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					} 
+				});
+			} 
+			/*
+			 * 获取消息列表（下拉刷新）
+			 */
+			function getMessageListDown(){
+				from = "Downlist"
+				if(message_num <= count_down){
+					mui.toast(dictRes[resType]["chatroomSub011"]);
+					mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+					return;
+				}
+				argin = {  
+					"version":"0.0.3",
+					"codein":"BM015",
+					"addr":act,
+					"pwd":pwd,
+					"target":user_id,
+					"start":start_down,
+					"count":count_down
+				};
+				console.log(count_down);
+				console.log(start_down);
+				argin = JSON.stringify(argin); 
+				console.log(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						
+						if(data.cbm == "OK"){ 
+							if(start_down<count_down){
+								count_down = start_down;
+								start_down = "0";
+							}else{
+								start_down = start_down - count_down;
+							}
+							console.log(start_down)
+							var cms = JSON.parse(data.cms); 
+							var msgs_length = cms.msgs.length;
+							console.log("+++++++++++++++++++++++"+msgs_length);
+							for(i=msgs_length-1; i>=0; i--){ 
+								var from_addr = cms.msgs[i].from;
+								msg_pwd = cms.msgs[i].msg;
+								var msgdate = cms.msgs[i].date;
+								var idx = cms.msgs[i].idx;
+								var msg_divs = document.createElement("div");
+								msg_divs.mid = msg_pwd;
+								msg_divs.idx = idx;
+								msg_divs.from = from_addr;
+								if(isActive == 1){
+									inputPsw();  
+								}
+								if(from_addr == act){ 
+									console.log("11111111");
+									msg_divs.className = "my_send_div chat_div";
+									msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic" src="../img/myhead.jpg" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+									chat_list.insertBefore(msg_divs,chat_list.firstChild);
+								}else{
+									msg_divs.className = "other_send_div chat_div";
+									msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic headpic" src="" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+									chat_list.insertBefore(msg_divs,chat_list.firstChild);
+								}
+							} 
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+//							mui('.mui-scroll-wrapper').scroll().scrollToBottom(10);
+							chats= document.getElementById("pullrefresh").getElementsByClassName('content');
+							headTihuan();
+						}else if(data.cbm == "ERR"){
+							if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}
+							if(data.cms=="RSE014"){
+								mui.toast(dictRes[resType]["RSE014"]);
+							}
+							console.log(start_down);
+							if(start_down == 0 && count_down == 0){
+								mui.toast(dictRes[resType]["chatroomSub011"]); 
+							} 
+							mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+//							mui('#pullrefresh').pullRefresh().disablePullupToRefresh();
+						}
+					}, 
+					error: function(xhr, type, errorThrown) {
+						mui('#pullrefresh').pullRefresh().endPulldownToRefresh();
+						console.log(type);
+					} 
+				});
+			}
+			/*
+			 * 消息解码
+			 */
+			function inputPsw(){
+				if(isActive ==1){
+					if(from == "send"){
+						mid = cmses;
+					}else{
+						mid = msg_pwd;
+					}
+				}else{
+					mid = div.mid;
+				}
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM016",
+					"addr":act,
+					"pwd":pwd,
+					"msg":mid
+				};
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					async:false,
+					data: { 
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){ 
+							var new_msg = data.cms;
+							if(isActive == 1){
+								if(from == "send"){
+									cmses = new_msg;
+								}else{
+									msg_pwd = new_msg;
+								}
+							}else{
+								div.getElementsByClassName("content")[0].innerHTML ='<div class="jian"></div>' + new_msg;
+							}	
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE012"){
+								mui.toast(dictRes[resType]["RSE012"]);
+								console.log("消息地址无效");
+							}else if(data.cms=="RSE013"){
+								mui.toast(dictRes[resType]["RSE013"]);
+								console.log("消息地址无效");
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					} 
+				});
+			}
+			/*
+			 * 发送消息
+			 */
+			document.getElementById("send_btn").addEventListener("tap",function(){
+				msg = document.getElementById("text_input").value;
+				if(msg == ""){
+					mui.toast(dictRes[resType]["chatroomSub012"]);
+					return;
+				}
+				sendMessage();
+			});
+			function sendMessage(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM014",
+					"addr":act,
+					"pwd":pwd,
+					"target":user_id,
+					"msg":msg
+				};
+				argin = JSON.stringify(argin); 
+				console.log(argin); 
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							start = start + 1; 
+							document.getElementById("text_input").value = "";
+							cmses = data.cms;
+							var msg_div = document.createElement("div");
+							var dates = new Date();
+							console.log(dates);
+							dates = dates.getFullYear()+'-'+'0'+(dates.getMonth()+1)+'-'+'0'+dates.getDate()+' '+dates.getHours()+':'+dates.getMinutes()+':'+dates.getSeconds();
+							msg_div.mid = cmses;
+							msg_div.className = "my_send_div chat_div";
+							if(isActive == 1){
+								from = "send";
+								inputPsw();
+							}
+							msg_div.innerHTML = '<div id="clock" class="chat_time">'+dates+'</div><img class="head_pic" src="../img/myhead.jpg" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+cmses+'</div></div>';
+							chat_list.appendChild(msg_div);
+							mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh",{from:"chatroom"});
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}else if(data.cms=="RSE015"){
+								mui.toast(dictRes[resType]["RSE015"]);
+							}else{
+								mui.toast(dictRes[resType]["allPage003"]);
+							}
+							
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 消息删除
+			 */
+			function deleteMsg(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM017",
+					"addr":act,
+					"pwd":pwd,
+					"idx":div.idx+"",
+					"target":user_id
+				};
+				argin = JSON.stringify(argin);
+				console.log(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){ 
+							div.parentNode.removeChild(div);
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE011"){
+								mui.toast(dictRes[resType]["RSE011"]);
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					} 
+				});
+			}
+			/*
+			 * 消息解码手动执行
+			 */
+			window.addEventListener("refreshMessage",function(){
+				div.code = 1;
+				inputPsw();  
+			});
+			/*
+			 * 转账遮罩
+			 */
+			mask=mui.createMask(function(){
+				document.getElementById("f_mask").style.display='none';
+			});
+			document.getElementById("zhuan").addEventListener('tap',function(){
+				mask.show();
+				document.getElementById("f_mask").style.display='block';
+				freshMoney();
+				document.getElementById("num_money").value = 5;
+				var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+				tds[0].style.border='2px solid #E73A33';tds[1].style.border='1px solid #f0f0f0';tds[2].style.border='2px solid #f0f0f0';tds[3].style.border='2px solid #f0f0f0';
+				
+			});	
+			document.getElementById("zclose").addEventListener('tap',function(){
+				mask.close();
+				document.getElementById("f_mask").style.display='none';
+			});
+			/*
+			 * 转账，消息购买tab切换
+			 */
+			document.getElementById("Mon").addEventListener("tap",function(){
+				document.getElementById("Mon").style.color = "red";
+				document.getElementById("Mes").style.color = "black";
+				document.getElementById("MonC").style.display = "block";
+				document.getElementById("MesC").style.display = "none";
+				document.getElementById("Mon_bot").style.display='block';
+				document.getElementById("Mes_bot").style.display='none';
+			});
+			document.getElementById("Mes").addEventListener("tap",function(){
+				document.getElementById("Mon").style.color = "black";
+				document.getElementById("Mes").style.color = "red";
+				document.getElementById("MesC").style.display = "block";
+				document.getElementById("MonC").style.display = "none";
+				document.getElementById("Mon_bot").style.display='none';
+				document.getElementById("Mes_bot").style.display='block';
+			})
+			/*
+			 * 转账手势验证
+			 */
+			document.getElementById("zbutton").addEventListener("tap",function(){
+				if(document.getElementById("zmoney").value == ""){
+					mui.toast(dictRes[resType]["account020"]);
+					return;
+				}
+				mui.openWindow({
+					url: "gesture_psw.html",
+					extras: {
+						from:'changeMoney'
+					}
+				});
+//				pwd_mask.show();
+//				document.getElementById("mask_pwd").style.display='block';
+				
+			});
+			window.addEventListener("refreshMoney",function(){
+				changeMoney();
+			})
+			/*
+			 * 转账
+			 */
+			function changeMoney(){
+				var tomoney = document.getElementById("zmoney").value;
+				var t_msg = document.getElementById("zmsg").value;
+				argin = { 
+					"version":"0.0.3",
+					"codein":"BM007",
+					"from":act,
+					"frompwd":pwd,
+					"to":user_id,
+					"money":tomoney,
+					"msg":t_msg
+				};
+				argin = JSON.stringify(argin);
+				console.log(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							mask.close();
+							document.getElementById("f_mask").style.display='none';
+							mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh");
+							mui.fire(plus.webview.getWebviewById("html/Transaction/transaction.html"),"reloadlist");
+							mui.toast(dictRes[resType]["account024"])
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE002"){
+								mui.toast(dictRes[resType]["RSE002"]);
+							}else if(data.cms=="RSE004"){
+								mui.toast(dictRes[resType]["RSE004"]);
+							}else if(data.cms=="RSE005"){
+								mui.toast(dictRes[resType]["RSE005"]);
+							}
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 购买消息
+			 */
+			function buyMessage(money_num){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM018",
+					"addr":act,
+					"pwd":pwd,
+					"money":money_num
+				};
+				argin = JSON.stringify(argin); 
+				console.log(argin); 
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							mask.close();
+							document.getElementById("f_mask").style.display='none';
+							mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh");
+							mui.fire(plus.webview.getWebviewById("account.html"),"sendFresh"); 
+							mui.toast("购买成功~");
+						}else if(data.cbm == "ERR"){
+							if(data.cms == "RSE005"){
+								mui.toast(dictRes[resType]["RSE005"]);
+							}else{
+								mui.toast(dictRes[resType]["allPage003"]);
+							} 
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 购买消息条数计算
+			 */
+			document.getElementById("num_money").addEventListener("keyup",function(){
+				refreshTable();
+				var money_num = document.getElementById("num_money").value;
+				returnBorder(money_num,num_money);
+				document.getElementById("num_in").innerText = dictRes[resType]["chatroomSub007"] + money_num*10+dictRes[resType]["chatroomSub008"];
+			})
+			document.getElementById("sub").addEventListener("tap",function(){
+				refreshTable();
+				var money_num = document.getElementById("num_money").value;
+				returnBorder(money_num,sub);
+				document.getElementById("num_money").value = money_num - 1;
+				document.getElementById("num_in").innerText = dictRes[resType]["chatroomSub007"] + document.getElementById("num_money").value*10+dictRes[resType]["chatroomSub008"];
+			});
+			document.getElementById("add").addEventListener("tap",function(){
+				refreshTable();
+				var money_num = document.getElementById("num_money").value;
+				returnBorder(money_num,add);
+				if(money_num == ""){
+					document.getElementById("num_money").value = 1;
+				}else{
+					document.getElementById("num_money").value = parseInt(money_num) + 1;
+				}
+				document.getElementById("num_in").innerText = dictRes[resType]["chatroomSub007"] + document.getElementById("num_money").value*10+dictRes[resType]["chatroomSub008"];
+			})
+			document.getElementById("num_button").addEventListener("tap",function(){
+				money_nums = document.getElementById("num_money").value;
+				mui.openWindow({
+					url: "gesture_psw.html",
+					extras: {
+						from:'changeMsgnum'
+					}
+				});
+			});
+			/*
+			 * 点击数字金币快捷切换
+			 */
+			function tapChange(){
+			 	var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+			 	console.log(tds.length);
+			 	for(var i=0;i<tds.length;i++){
+			 		tds[i].addEventListener('tap',function(){
+			 			for(var n=0;n<tds.length;n++){
+			 				tds[n].style.border='1px solid #f0f0f0';
+			 			}
+			 			this.style.border='2px solid #E73A33';
+			 			console.log(parseInt(this.innerText));
+			 			document.getElementById("num_money").value=parseInt(this.innerText);
+			 			document.getElementById("num_in").innerText = dictRes[resType]["chatroomSub007"] + document.getElementById("num_money").value*10 + dictRes[resType]["chatroomSub008"];
+			 		})
+			 	}
+			}
+			/*
+			 * 清空快捷框
+			 */
+			function refreshTable(){
+				var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+				for(var i=0;i<tds.length;i++){
+					tds[i].style.border='1px solid #f0f0f0';
+				}
+			}
+			/*
+			 * 数字快捷框双向绑定
+			 */
+			function returnBorder(money_num,type){
+//				console.log(JSON.stringify(type));
+				if(type==sub){
+					var num=parseInt(money_num)-1;
+					var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+					if(num=='5'){
+						tds[0].style.border='2px solid #E73A33';
+					}else if(num=='8'){
+						tds[1].style.border='2px solid #E73A33';
+					}else if(num=='10'){
+						tds[2].style.border='2px solid #E73A33';
+					}else if(num=='20'){
+						tds[3].style.border='2px solid #E73A33';
+					}
+				}else if(type==add){
+					var num=parseInt(money_num)+1;
+					var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+					if(num=='5'){
+						tds[0].style.border='2px solid #E73A33';
+					}else if(num=='8'){
+						tds[1].style.border='2px solid #E73A33';
+					}else if(num=='10'){
+						tds[2].style.border='2px solid #E73A33';
+					}else if(num=='20'){
+						tds[3].style.border='2px solid #E73A33';
+					}
+				}else if(type==num_money){
+					var num=parseInt(money_num);
+					var tds = document.getElementById("num_ratio").getElementsByTagName('td');
+					if(num=='5'){
+						tds[0].style.border='2px solid #E73A33';
+					}else if(num=='8'){
+						tds[1].style.border='2px solid #E73A33';
+					}else if(num=='10'){
+						tds[2].style.border='2px solid #E73A33';
+					}else if(num=='20'){
+						tds[3].style.border='2px solid #E73A33';
+					}
+				}
+				
+			}
+			/*
+			 * 消息条数购买验证成功后执行
+			 */
+			window.addEventListener("refreshAddMsg",function(){
+				buyMessage(money_nums);
+			});
+			/*
+			 * 剩余消息条数刷新
+			 */
+			function freshMoney(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM005",
+					"addr":act,
+					"pwd":pwd
+				};
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						console.log(data.cms);
+						if(data.cbm == "OK"){
+							document.getElementById("msg_num").innerText = dictRes[resType]["chatroomSub010"] + JSON.parse(data.cms).msgtotal;
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 未知用户头像替换
+			 */
+			function headTihuan(){
+				var headpic_all = document.getElementsByClassName("headpic");
+				console.log("==============="+headpic_all.length);
+				var headpic_length = headpic_all.length;
+				console.log(headpic);
+				if(headpic=='../../img/i5.png'){
+					headpic='../img/i5.png';
+				}else if(headpic=='../../img/web2.png'){
+					headpic='../img/web2.png';
+				}
+				
+				for(i=0; i<headpic_length; i++){
+					headpic_all[i].src = headpic;
+					console.log("================>"+headpic_all[i].src);
+				}
+			}
+			/*
+			 * 刷新页面
+			 */
+			window.addEventListener('refresh', function(e){
+				console.log('111111');
+				console.log(e.detail.headpic);
+				if(e.detail.headpic==undefined){ 
+					console.log("不用执行");
+				}else{
+					var headspic=JSON.stringify(e.detail.headpic);
+					headspic=JSON.parse(headspic)
+					console.log(headspic.length);
+					getChangePic(headspic); 
+				}
+				
+			});
+			/*
+			 *获取更改头像
+			 */
+			function getChangePic(from){
+				var heads = document.getElementsByClassName("head_pic headpic");
+				console.log(heads.length+'hhhhhhhhhh'+from);
+				for(var j=0;j<heads.length;j++){
+					heads[j].src=from;
+					console.log('---------------'+heads[j].src);
+				}
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/QR_code.css" />
+		<style>	
+			
+		</style>
+	</head>
+	<body>
+		<div><br />
+			<div id="warning" class="warning">请妥善保存包含你账号信息的二维码，这将是您登录的凭证~</div>
+			<img id="QR" class="QR" src="" /> 
+		</div>
+		<button id="into">点击进入</button>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/backdisable.js"></script>
+		<script src="../js/changelanguage/chinese.js"></script>
+		<script src="../js/changelanguage/english.js"></script>
+		<script src="../js/changelanguage/TraditionalChinese.js"></script>
+		<script src="../js/changelanguage/Korean.js"></script>
+		<script src="../js/changelanguage/Japanese.js"></script>
+		<script src="../js/changelanguage/Tibetan.js"></script>
+		<script src="../js/changelanguage/changeLanguage.js"></script>
+		<script>
+			var argin, url, act, pwd;//act:账号 
+			var resType;
+			mui.init({
+				gestureConfig: {
+					longtap: false, //默认为false
+				}
+			});
+			mui.plusReady(function() {
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"warning","RID":"QRcode001","ATYPE":1},
+								{"TID":"into","RID":"QRcode002","ATYPE":1}]
+				resReplace(resType, changeLan);
+				
+				url = plus.storage.getItem("url");
+				act = plus.storage.getItem("account");
+				pwd = plus.webview.currentWebview().pwd;
+				getQR();
+				downloadQR();
+				timedCount();
+			});
+			/*
+			 * 根据账号获取二维码
+			 */
+			function getQR(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM003",
+					"addr":act 
+				};
+				argin = JSON.stringify(argin); 
+				document.getElementById("QR").src = url + "api?argin=" + argin;
+
+			}
+			/*
+			 * 账号生效计时
+			 */
+			var time = 25;
+			var t;
+			var click_btn = document.getElementById("into");
+			function timedCount() {
+				if(time<=0){
+					click_btn.disabled = false;
+					click_btn.style.backgroundColor = "#E73A33";
+					click_btn.innerText = dictRes[resType]["QRcode002"];
+					return;
+				}
+				click_btn.disabled = true;
+				click_btn.style.backgroundColor = "#777777";
+				click_btn.innerText = time + dictRes[resType]["QRcode003"];
+				time--;
+				t=setTimeout("timedCount()",1000)
+			}
+			/*
+			 * 主界面页面跳转
+			 */
+			document.getElementById("into").addEventListener("tap",function(){
+				checkAccount();
+			});
+			/*
+			 * 账号验证
+			 */
+			function checkAccount(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM005",
+					"addr":act,
+					"pwd":pwd
+				};
+				console.log(act);
+				console.log(pwd);
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						console.log(act);
+						if(data.cbm == "OK"){
+							plus.storage.setItem("hash",JSON.parse(data.cms).ahash);
+							mui.openWindow({
+								url: '../home.html',
+								id: "home",
+								extras: {
+									pwd:pwd
+								}
+							});
+						}else if(data.cbm == "ERR"){
+							mui.toast(dictRes[resType]["RSE002"]);	
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			function downloadQR(){
+				document.getElementById("QR").addEventListener('longtap',function(){
+					var btn =["确定", "取消"];
+					var mysrc =this.src;
+					console.log(mysrc);
+					mui.confirm('是否保存图片', '嘘', btn, function(e) {
+						if (e.index == 0) {
+							createDownload(mysrc, HTMLImageElement);
+						} else if (e.index == 1) {
+							console.log('false');
+						}
+					
+					});
+				});
+			}
+			function createDownload(loadUrl, type) {
+			var dtask = plus.downloader.createDownload(loadUrl, {
+				method: "GET"
+			}, function(d, status) {
+				// 下载完成
+				if (status == 200) {
+					//业务代码
+					console.log("Download success: " + d.filename);
+					plus.gallery.save(d.filename, function() {
+						mui.toast('图片保存成功');
+					}, function() {
+						console.log('false');
+					});
+				} else {
+					console.log("Download failed: " + status);
+				}
+			});
+			dtask.start();
+		}
+		</script>
+	</body>
+	
+</html>

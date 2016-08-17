@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<link rel="stylesheet" href="../../css/mui.min.css"> 
+	<link rel="stylesheet" href="../../css/search.css" />
+</head>
+<style>
+	body{
+		background-color: #000000;
+	}
+	a{
+	color: #333333;
+	}
+	#bcid {
+	width: 100%;
+	position: absolute;
+	top: 0px;
+	bottom:44px;
+	margin-top:44px;
+	text-align: center;
+	}
+	.tip {
+		color: #FFFFFF;
+		font-weight: bold;
+		text-shadow: 0px -1px #103E5C;
+	}
+	footer {
+		width: 100%;
+		height: 44px;
+		position: absolute;
+		bottom: 0px;
+		line-height: 44px;
+		text-align: center;
+		color: #FFF;
+		background-color: #acafb7;
+	}
+	.fbt {
+		width: 50%;
+		height: 100%;
+		background-color: #acafb7;
+		float: left;
+		text-align: center;
+		line-height: 44px;
+	}
+	.fbt:active {
+	  	-webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.5);
+		box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.5);
+	}
+	#content{
+		position: absolute;
+		background-color: white;
+		bottom: 0;
+		width: 100%;
+		height: 100px;
+		text-align: left;
+		border: 1px solid red;
+	}
+	.left_div{
+		float: left;
+		width: 20%;
+	}
+	#address{
+		float: right;
+		width: 80%;
+		border: none;
+	}
+	
+</style>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<!--<button class="mui-btn mui-action-back mui-btn-link mui-btn-nav mui-pull-left">
+		</button>-->
+		<a style="color: #FFFFFF;" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<label id="search">扫码获取地址</label>
+		<div class="mui-input-row">
+			<!--<input id="search_content" type="text" class="mui-input-clear" placeholder="请输入用户名或账号">-->
+		</div>
+	</header>
+	<div id="bcid">
+			<div style="height:40%;"></div>
+			<p id="tip" class="tip" style="">...载入中...</p>
+		</div>
+	
+		<footer>
+		<!--<div id="content">
+		<div class="left_div">账号地址</div>
+		<input class="right_input" type="text" id="address"/>
+		</div>-->
+			<div id="cancel" class="fbt" onclick="mui.back()">取　 消</div>
+			<div id="select" class="fbt" onclick="scanPicture();">从相册选择二维码</div>
+		</footer>
+</body>
+<script src="../../js/mui.min.js"></script>
+<script src="../../js/changelanguage/chinese.js"></script>
+<script src="../../js/changelanguage/english.js"></script>
+<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+<script src="../../js/changelanguage/Korean.js"></script>
+<script src="../../js/changelanguage/Japanese.js"></script>
+<script src="../../js/changelanguage/Tibetan.js"></script>
+<script src="../../js/changelanguage/changeLanguage.js"></script>
+<script type="text/javascript">
+		var ws=null,wo=null;
+		var scan=null,domready=false;
+		var resType;
+		var act;
+		mui.plusReady(function() {
+			act = plus.storage.getItem("account");
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"search","RID":"qrCheck001","ATYPE":1},
+							{"TID":"tip","RID":"changeAccount002","ATYPE":1},
+							{"TID":"cancel","RID":"addperson002","ATYPE":1},
+							{"TID":"select","RID":"addperson003","ATYPE":1}]
+			resReplace(resType, changeLan);
+				
+		});
+		// H5 plus事件处理
+		function plusReady(){
+			if(ws||!window.plus||!domready){
+				return;
+			}
+			// 获取窗口对象
+			ws=plus.webview.currentWebview();
+			wo=ws.opener();
+			// 开始扫描
+			ws.addEventListener('show',function(){
+				scan=new plus.barcode.Barcode('bcid');
+			    scan.onmarked=onmarked;
+			    scan.start({conserve:true,filename:"_doc/barcode/"});
+			});
+			// 显示页面并关闭等待框
+		    ws.show("pop-in");
+//		    wo.evalJS("closeWaiting()");
+		}
+		if(window.plus){
+			plusReady();
+		}else{
+			document.addEventListener("plusready",plusReady,false);
+		}
+		// 监听DOMContentLoaded事件
+		document.addEventListener("DOMContentLoaded",function(){
+			domready=true;
+			plusReady();
+		},false);
+		// 二维码扫描成功
+		function onmarked(type,result,file){
+		    switch(type){
+		    	case plus.barcode.QR:
+		    	type = "QR";
+		    	break;
+		    	case plus.barcode.EAN13:
+		    	type = "EAN13";
+		    	break;
+		    	case plus.barcode.EAN8:
+		    	type = "EAN8";
+		    	break;
+		    	default:
+		    	type = "其它"+type;
+		    	break;
+		    }
+		    result = result.replace(/\n/g, '');
+		    console.log(result);
+		    if(act==result){
+		    	mui.toast(dictRes[resType]["addperson004"]);
+			 	plus.webview.currentWebview().close();
+		    }else if(result.length == 42 && result[0] == "A" && result[result.length-1] == "A"){
+			mui.fire(plus.webview.currentWebview().opener(),'refreshbadge',{id:result});
+			plus.webview.currentWebview().close();
+			}else{
+			 	mui.toast(dictRes[resType]["addperson004"]);
+			 	plus.webview.currentWebview().close();
+			 }
+//		    wo.evalJS("scaned('"+ type +"','"+ result +"','"+ file +"');");
+//		    back();
+		}
+		// 从相册中选择二维码图片 
+		function scanPicture() {
+		    plus.gallery.pick(function(path){
+			    plus.barcode.scan(path,onmarked,function(error){
+					plus.nativeUI.alert(dictRes[resType]["addperson005"]);
+				});
+		    },function(err){
+//		        plus.nativeUI.alert("Failed: "+err.message);
+				mui.toast(dictRes[resType]["addperson006"]);
+		    });
+		}
+		</script>
+</html>

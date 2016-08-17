@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="../js/mui.min.js"></script>
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="../css/language.css"/>
+    <script type="text/javascript" charset="UTF-8">
+      	mui.init();
+    </script>
+    <style type="text/css">
+	    .mui-segmented-control{
+	    	border: none;
+	    	height: 100%;
+	    	margin-top: 50px;
+	    }
+	    .mui-segmented-control .mui-control-item:first-child {
+    	border-left-width: 1px;
+		}
+    	.mui-segmented-control .mui-control-item.mui-active {
+		    color: #FFFFFF;
+		    background-color: #44586c;
+		    border: 1px solid #44586c;
+		   	display: inline-block;
+		   	width: 80%;
+		    margin-left: 10%;
+		   	
+		}
+		.mui-segmented-control .mui-control-item {
+			/*height: 40px;*/
+		    color: #44586c;
+		    margin-top: 10px;
+		    border: 1px solid #44586c;
+		    background-color: #FFFFFF;
+		    display: inline-block;
+		    width: 80%;
+		    margin-left: 10%;
+		}
+    </style>
+</head>
+<body>
+	<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-pull-left">
+				<img src="../img/back.png"/>
+			</a>
+			<h1 id="changelanguege" class="mui-title">系统语言选择</h1>
+		</header>
+		<div id="content" class="mui-content mui-segmented-control">
+			<ul class="mui-table-view mui-control-item mui-active">
+				简体中文
+			</ul>
+			<ul class="mui-table-view mui-control-item ">
+				繁體中文
+			</ul>
+			<ul class="mui-table-view mui-control-item">
+				한국어
+			</ul>
+			<ul class="mui-table-view mui-control-item">
+				日本語
+			</ul>
+			<ul class="mui-table-view mui-control-item">
+				English
+			</ul>
+			<ul class="mui-table-view mui-control-item">
+				तिब्बती भाषा
+			</ul>
+		</div>
+</body>
+<script src="../js/changelanguage/chinese.js"></script>
+<script src="../js/changelanguage/english.js"></script>
+<script src="../js/changelanguage/TraditionalChinese.js"></script>
+<script src="../js/changelanguage/Korean.js"></script>
+<script src="../js/changelanguage/Japanese.js"></script>
+<script src="../js/changelanguage/Tibetan.js"></script>
+<script src="../js/changelanguage/changeLanguage.js"></script>
+<script type="text/javascript">
+	var language,data,index;
+	var resType;
+	mui.init({
+		beforeback: function(){
+			mui.fire(plus.webview.currentWebview().opener(),'refresh',{language:language});
+			//返回true，继续页面关闭逻辑
+			return true;
+		}
+	});
+	mui.plusReady(function(){ 
+		//语言切换
+		if(plus.storage.getItem("language")){
+			resType = plus.storage.getItem("language");
+		}else{
+			resType = "CHINESE";
+		}
+		language = resType;
+		var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+		resReplace(resType, changeLan);
+		getlanguageType();
+		setlanguageType();
+	});
+	/*
+	 * 读取语言种类
+	 */
+	function getlanguageType(){
+		data=plus.storage.getItem('language');
+		if(!data){
+			return
+		}
+		console.log(data);
+		if(data=='CHINESE'){
+			data='简体中文';
+		}else if(data=='ENGLISH'){
+			data='English';
+		}else if(data=='TCHINESE'){
+			data='繁體中文';
+		}else if(data=='KOREAN'){
+			data='한국어';
+		}else if(data=='JAPANESE'){
+			data='日本語';
+		}else if(data=='TIBETAN'){
+			data='तिब्बती भाषा';
+		}
+		var uls=document.getElementById("content").getElementsByClassName('mui-table-view mui-control-item mui-active');
+		var other=document.getElementById("content").getElementsByClassName('mui-table-view mui-control-item');
+		console.log(other.length);
+		console.log(uls[0].className);
+		if(uls[0].className!=data){
+			uls[0].className='mui-table-view mui-control-item';
+			for(var i=0;i<other.length;i++){
+				if(other[i].innerText==data){
+					index=i;
+				}
+			}
+			other[index].className='mui-table-view mui-control-item mui-active';
+		}
+		
+	}
+	/*
+	 * 设置语言种类
+	 */
+	function setlanguageType(){
+		var uls=document.getElementById("content").getElementsByTagName('ul');
+	for(var i=0;i<uls.length;i++){
+		uls[i].addEventListener('tap',function(){
+			console.log(this.innerText);
+			if(this.innerText=='简体中文'){
+				language="CHINESE";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}else if(this.innerText=='English'){
+				language="ENGLISH";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}else if(this.innerText=='繁體中文'){
+				language="TCHINESE";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}else if(this.innerText=='한국어'){
+				language="KOREAN";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}else if(this.innerText=='日本語'){
+				language="JAPANESE";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}else if(this.innerText=='तिब्बती भाषा'){
+				language="TIBETAN";
+				var changeLan = [{"TID":"changelanguege","RID":"languege001","ATYPE":1}]
+				resReplace(language, changeLan);
+				plus.storage.setItem('language',language);
+				console.log(plus.storage.getItem('language'));
+			}
+		})
+	}
+	}
+	
+</script>
+</html>

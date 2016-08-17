@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="../../js/mui.min.js"></script>
+    <link href="../../css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="UTF-8">
+      	mui.init();
+    </script>
+    <style type="text/css">
+    body{
+    	background-color: #F3F3F3;
+    }
+    	.mui-bar{
+    		background-color: #1E2E3E;
+    	}
+    	button{
+    		width: 100%;
+    	}
+    	#head_content{
+    		display: none;
+    		position: fixed;
+    		height: 100%;
+    		z-index: 999;
+    		width: 100%;
+    		background-color: #FFFFFF;
+    	}
+    	#head_content .mui-segmented-control{
+    		height: auto;
+    		text-align: center;
+    		border: none;
+    	}
+    	#head_content .mui-segmented-control img{
+    		width: 22%;
+    		height: auto;
+    		border-radius: 6px;
+    		margin: 2px;
+    		padding: 2px;
+    		border: none;
+    		/*border: 1px solid #1E2E3E;*/
+    	}
+    	#head_content .mui-control-item{
+    		display: inline-block;
+    		/*margin: 20px;*/
+    		width: 25%;
+    		border: 1px solid red;
+    		
+    		
+    	}
+    	#head_content .mui-control-item .mui-active{
+    		display: inline-block;
+    		background-color: #007AFF;
+    		border: 1px solid red;
+    		
+    	}
+    	.mui-segmented-control .mui-control-item.mui-active {
+		    color: white;
+		    background-color: #E73A33;
+		    border: 2px solid #c9ddf5;
+		}
+		.mui-table-view-cell:after {
+		    position: absolute;
+		    right: 15px;
+		    bottom: 0;
+		    left: 15px;
+		    height: 0px;
+		    content: '';
+		    -webkit-transform: scaleY(.5);
+		    transform: scaleY(.5);
+		    background-color: #c8c7cc;
+		}
+		#act_content{
+			width: 100%;
+			
+			/*margin-right: 5%;*/
+			/*margin-left: 5%;*/
+			text-align: center;
+			height: 60px;
+			/*border: 1px solid red;*/
+		}
+		#act_content div{
+			position: absolute;
+			font-size: 14px;
+			top: 21px;
+			left: 8%;
+		}
+		#act{
+			/*position: absolute;*/
+			padding-left: 30%;
+			width: 100%;
+			top: 10px;
+			color: #B0B7C1;
+			/*right: 2%;*/
+		}
+		#head_choose{
+			margin-top: 10px;
+			height:180px;
+			width: 100%;
+			/*margin-right: 5%;
+			margin-left: 5%;*/
+			text-align: center;
+			/*border: 1px solid red;*/
+		}
+		#head_choose p{
+			color: #B0B7C1;
+			font-size: 15px;
+			margin-top: 5px;
+		}
+		#head_pic{
+			/*position: absolute;*/
+			/*top: 5px;*/
+			/*right: 40%;*/
+			margin-top: 10px;
+			height: 90px;
+			width: 90px;
+			border-radius: 100%;
+		}
+		#remark_content{
+			width: 100%;
+			/*margin-right: 5%;
+			margin-left: 5%;*/
+			height: 60px;
+		}
+		#remark_content div{
+			position: absolute;
+			font-size: 14px;
+			top: 21px;
+			left: 8%;
+		}
+		#remark{
+			width: 100%;
+			padding-left: 30%;
+		}
+		#add{
+			margin-top: 20px;
+			width: 92%;
+			margin-left: 4%;
+			height: 50px;
+			border-radius: 6px;
+			background-color: #E73A33;
+			color: white;
+			font-size: 15px;
+		}
+		#add:active{
+			background-color: gainsboro;
+		}
+    </style>
+</head>
+<body>
+	<header class="mui-bar mui-bar-nav">
+		<a style="color: #FFFFFF;" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		<label id="addperson" style="color: #FFFFFF;margin-top: 12px;display: inline-block;">添加联系人</label>
+	</header>
+	
+	<div class="mui-content">
+		<div id="head_content" class="mui-table-view-cell">
+		<div style="margin-top: 50px;" class="mui-segmented-control">
+			<img class="mui-control-item mui-active" src="../../img/user_01.jpg"/>
+			<img class="mui-control-item" src="../../img/user_02.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_03.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_04.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_05.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_06.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_07.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_08.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_09.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_10.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_11.jpg"/>
+			<img  class="mui-control-item" src="../../img/user_12.jpg"/>
+		</div> 
+		<button id="send" style="margin-top: 60px;height: 50px;width: 90%;margin-left: 5%;margin-right: 5%;background-color: #E73A33;color: #FFFFFF;border-radius: 4px;">确认选择</button>
+		</div>
+		<div class="mui-table-view-cell" id="head_choose"><img id="head_pic" src="../../img/i5.png" /><p id="changehead">点击修改头像</p></div>
+		<div class="mui-table-view-cell" id="act_content"><div id="paddr">联系人地址</div><input id="act" readonly="readonly" type="text" /></div>
+		<div class="mui-table-view-cell" id="remark_content"><div id="mark">备注</div><input id="remark" type="text" /></div>
+		<button id="add" >确认添加</button>
+	</div>
+</body>
+<script src="../../js/changelanguage/chinese.js"></script>
+<script src="../../js/changelanguage/english.js"></script>
+<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+<script src="../../js/changelanguage/Korean.js"></script>
+<script src="../../js/changelanguage/Japanese.js"></script>
+<script src="../../js/changelanguage/Tibetan.js"></script>
+<script src="../../js/changelanguage/changeLanguage.js"></script>
+<script type="text/javascript">
+		var addId,remark,list,localpic; 
+		var jsonst=[];
+		var resType;
+		var act;
+		mui.plusReady(function(){ 
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"addperson","RID":"adddetail001","ATYPE":1},
+							{"TID":"changehead","RID":"adddetail002","ATYPE":1},
+							{"TID":"paddr","RID":"adddetail003","ATYPE":1},
+							{"TID":"mark","RID":"adddetail004","ATYPE":1},
+							{"TID":"add","RID":"adddetail005","ATYPE":1}]
+			resReplace(resType, changeLan);
+			
+//			plus.storage.removeItem('jsonst');
+			addId=plus.webview.currentWebview().result;
+			act = plus.storage.getItem("account");
+			console.log("-------------------"+act+"-"+addId);
+			//接收联系人列表
+			list= plus.storage.getItem('jsonst');
+//			plus.storage.removeItem('jsonst');
+			console.log(list); 
+			
+			//联系人头像选择
+			mask=mui.createMask(function(){
+			document.getElementById("head_content").style.display='none';
+			});
+			document.getElementById("head_choose").addEventListener('tap',function(){
+				mask.show();
+				document.getElementById("head_content").style.display='block';
+			});
+			document.getElementById("act").value=plus.webview.currentWebview().result;
+		    setperson();
+		    choosepic();
+		    send();
+		});	
+		/*
+		 * 联系头像选择
+		 */
+		function choosepic(){
+			var pics= document.getElementById("head_content").getElementsByTagName('img');
+			console.log(pics.length);
+			for(var i=0;i<pics.length;i++){
+				pics[i].addEventListener('tap',function(){
+					console.log(this.src);
+					send(this.src);			
+				})
+			}
+		}
+		/*
+		 * 头像传值
+		 */
+		function send(src){
+			document.getElementById("send").addEventListener('tap',function(){
+				console.log(src+'123');
+				if(src==undefined){
+				console.log("123");
+				document.getElementById("head_pic").src='../../img/i5.png';
+				mask.close();
+				}else{
+				document.getElementById("head_pic").src=src;
+				mask.close();	
+				}
+			});
+		}
+		/*
+		 * 保存联系人
+		 */
+		function setperson(){
+			document.getElementById("add").addEventListener('tap',function(){
+				remark= document.getElementById("remark").value;
+				localpic=document.getElementById("head_pic").src;
+				if(act==addId){
+			        mui.toast(dictRes[resType]["addperson004"]);
+			        return
+				}
+				if(list){
+					list=JSON.parse(list);
+					plus.webview.currentWebview().result = {
+					"id":addId,
+					"remark":remark, 
+					"src":localpic
+					};
+					list.push(plus.webview.currentWebview().result);
+					list.sort();
+					console.log(JSON.stringify(list));
+					var n = [list[0]];
+					console.log(act+addId);
+					for (var i = 1; i < list.length; i++) {
+			            if (list[i].id !== n[n.length - 1].id) {
+			                n.push(list[i]);
+			            }else{
+			            	mui.toast(dictRes[resType]["adddetail006"]);
+			            	return
+			            }
+			        }
+					console.log(JSON.stringify(n));
+					list=JSON.stringify(n);
+					plus.storage.setItem('jsonst',list);
+					console.log(plus.storage.getItem('jsonst')+'1');
+					mui.toast(dictRes[resType]["adddetail007"]);
+					mui.fire(plus.webview.getWebviewById('html/Contact/contact.html'),'reloadlist');
+					plus.webview.currentWebview().close();
+					
+				}else{
+				
+				plus.webview.currentWebview().result = {
+					"id":addId,
+					"remark":remark,
+					"src":localpic
+				};
+				jsonst.push(plus.webview.currentWebview().result);
+				jsonst=JSON.stringify(jsonst);
+				plus.storage.setItem('jsonst',jsonst);
+				console.log(plus.storage.getItem('jsonst')+'2');
+				mui.toast(dictRes[resType]["adddetail007"]);
+				mui.fire(plus.webview.getWebviewById('html/Contact/contact.html'),'reloadlist');
+				plus.webview.currentWebview().close();
+				}	
+			});
+		}
+</script>
+</html>

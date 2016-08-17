@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/add_node.css" />
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-pull-left">
+				<img src="../img/back.png"/>
+			</a>
+			<h1 id="addnode" class="mui-title">添加节点</h1>
+		</header>
+		<div class="mui-content">
+			<div class="input_div">
+				<label id="nodename">节点名称：</label>
+				<input id="node_name" type="text" placeholder="请输入节点名称" />
+			</div>
+			<div class="input_div">
+				<label id="nodeaddr">节点地址：</label>
+				<input id="node_addr" type="text" placeholder="请输入节点地址" />
+			</div>
+			<div class="input_div">
+				<label id="nodeport">节点端口：</label>
+				<input id="node_port" type="text" placeholder="请输入节点端口" />
+			</div>
+			<button id="register_btn" class="register_btn">保存</button>
+			<button id="return_btn" class="return_btn">验证</button>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/changelanguage/chinese.js"></script>
+	<script src="../js/changelanguage/english.js"></script>
+	<script src="../js/changelanguage/TraditionalChinese.js"></script>
+	<script src="../js/changelanguage/Korean.js"></script>
+	<script src="../js/changelanguage/Japanese.js"></script>
+	<script src="../js/changelanguage/Tibetan.js"></script>
+	<script src="../js/changelanguage/changeLanguage.js"></script>
+	<script type="text/javascript">
+		var argin, url, node_content,
+			node_interim, nodeName, 
+			nodes, port;
+		var from;
+		var resType;
+		var renode = 0;
+		mui.plusReady(function() {
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"addnode","RID":"addnode001","ATYPE":1},
+							{"TID":"nodename","RID":"addnode002","ATYPE":1},
+							{"TID":"nodeaddr","RID":"addnode003","ATYPE":1},
+							{"TID":"nodeport","RID":"addnode004","ATYPE":1},
+							{"TID":"node_name","RID":"addnode005","ATYPE":2},
+							{"TID":"node_addr","RID":"addnode006","ATYPE":2},
+							{"TID":"node_port","RID":"addnode007","ATYPE":2},
+							{"TID":"register_btn","RID":"addnode008","ATYPE":1},
+							{"TID":"return_btn","RID":"addnode009","ATYPE":1}]
+			resReplace(resType, changeLan);
+			
+			document.getElementById("return_btn").addEventListener("tap",function(){
+				nodeName = document.getElementById("node_name").value;
+				nodes = document.getElementById("node_addr").value;
+				port = document.getElementById("node_port").value;
+				from = "check";
+				jointNode();
+			});
+			document.getElementById("register_btn").addEventListener("tap",function(){
+				nodeName = document.getElementById("node_name").value;
+				nodes = document.getElementById("node_addr").value;
+				port = document.getElementById("node_port").value;
+				from = "save";
+				jointNode();
+			});
+		});
+		/*
+		 * 节点存储
+		 */
+		function saveNode(){
+			if(nodes == "" || port == ""){
+				mui.toast(dictRes[resType]["addnode010"]);
+				return;
+			}else if(nodeName == ""){
+				nodeName = dictRes[resType]["addnode011"];
+			}
+			var Nodes = plus.storage.getItem("node_content");
+			console.log(Nodes);
+			if(!Nodes){
+				node_content = [];
+			}else{
+				Nodes = JSON.parse(Nodes);
+				node_content = Nodes;
+			}
+			for(var i=0; i<node_content.length; i++){
+				if(node_content[i].node_addr == nodes && node_content[i].node_port == port){
+					renode = 1;
+					console.log("22222222222222222");
+				}
+			}
+			if(renode == 1){
+				mui.toast(dictRes[resType]["addnode015"]);
+				return;
+			}
+			node_interim = {
+				"node_name":nodeName,
+				"node_addr":nodes,
+				"node_port":port
+			};
+			node_content.push(node_interim);
+			node_content = JSON.stringify(node_content);
+			plus.storage.setItem("node_content",node_content);
+			var node_contents = [];
+			node_contents.push(node_interim);
+			mui.fire(plus.webview.getWebviewById("node_setting"),'refreshpage',{
+			    node_content:node_content,
+			    node_contents:node_contents
+			});
+			mui.toast(dictRes[resType]["addnode014"]);
+			mui.back();
+		}
+		/*
+		 * 节点拼接
+		 */
+		function jointNode(){
+			if(nodes == "" || port == ""){
+				mui.toast(dictRes[resType]["addnode010"]);
+				return;
+			}
+			url = 'http://' + nodes + ':' + port + '/';
+			checkNode();
+		}
+		/*
+		 * 验证接口
+		 */
+		function checkNode(){
+			plus.nativeUI.showWaiting();
+			console.log(url);
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM001"
+			};
+			argin = JSON.stringify(argin); 
+			console.log(argin);
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 3000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						if(from == "check"){
+							mui.toast(dictRes[resType]["addnode012"]);
+						}else{
+							saveNode();
+						}	
+					}
+					plus.nativeUI.closeWaiting();
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast(dictRes[resType]["addnode013"]);
+					plus.nativeUI.closeWaiting();
+					console.log(type);
+				}
+			});
+		}
+	</script>
+
+</html>

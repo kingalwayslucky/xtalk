@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<!--App自定义的css-->
+		<!--<link rel="stylesheet" type="text/css" href="../css/app.css" />-->
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+				background-color: #1e2e3e;
+				/*background: url(../img/login-bg.jpg);
+				background-size: cover;*/
+			}
+			.mui-content {
+			    background-color: #242529;
+			}
+			#holder {
+				width: 300px;
+				height: 300px;
+				/*border: solid 1px #bbb;*/
+				/*border-radius: 5px;*/
+				margin: 0 auto;
+				margin-bottom: 0px;
+				/*background-color: #fff;*/
+			}
+			#alert {
+				text-align: center;
+				padding: 20px 10px;
+				margin-top: 100px;
+				color: #e73a33;
+			}
+			.copy {
+				font-size: 10px;
+				color: rgba(255, 255, 255, .2);
+				text-align: center;
+				margin-top: 80px;
+			}
+			#setting {
+				font-size: 40px;
+				color: #B0B7C1;
+				margin-top: 5px;
+				margin-left: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<a id="setting" class="mui-action-back mui-icon mui-icon-closeempty mui-pull-left"></a>
+		<div id='alert'>请设置手势密码</div>
+		<div id='holder' class="mui-locker" data-locker-options='{"ringColor":"rgba(255,255,255,1)","fillColor":"rgba(41,57,72,.9)","pointColor":"rgba(231,58,51,1)","lineColor":"rgba(231,58,51,1)"}' data-locker-width='300' data-locker-height='300'></div>
+		
+		<!--<div class="copy">
+			<div id="copyright">嘘v1.0.0版权所有</div>
+			<div style="font-size: 8px;line-height: 8px;">Copyright&copy;2008 Powered By Chat</div>
+		</div>-->
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/mui.locker.js"></script>
+		<script src="../js/changelanguage/chinese.js"></script>
+		<script src="../js/changelanguage/english.js"></script>
+		<script src="../js/changelanguage/TraditionalChinese.js"></script>
+		<script src="../js/changelanguage/Korean.js"></script>
+		<script src="../js/changelanguage/Japanese.js"></script>
+		<script src="../js/changelanguage/Tibetan.js"></script>
+		<script src="../js/changelanguage/changeLanguage.js"></script>
+		<script>
+			var argin, act, url;//act:随机账号
+			var resType;
+			mui.plusReady(function() {
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"alert","RID":"allPage004","ATYPE":1}]
+				resReplace(resType, changeLan);
+				
+				url = plus.storage.getItem("url");
+				getAccount(); 
+				gesture();
+			});
+			/*
+			 * 手势操作
+			 */
+			function gesture(){
+				(function($, doc) {
+					$.init();
+					var holder = doc.querySelector('#holder'),
+						alert = doc.querySelector('#alert'),
+						record = [];
+					//处理事件
+					holder.addEventListener('done', function(event) {
+						var rs = event.detail;
+						if (rs.points.length < 4) {
+							alert.innerText = dictRes[resType]["allPage005"];
+							record = [];
+							rs.sender.clear();
+							return;
+						}
+						console.log(rs.points.join(''));
+						record.push(rs.points.join(''));
+						console.log(record);
+						if (record.length >= 2) {
+							if (record[0] == record[1]) {
+								userRegister(record[1]);
+							} else {
+								alert.innerText = dictRes[resType]["allPage006"];
+							}
+							rs.sender.clear();
+							record = [];
+						} else {
+							alert.innerText = dictRes[resType]["allPage007"];
+							rs.sender.clear();
+						}
+					});
+				}(mui, document));
+			}
+			
+			/*
+			 * 获取随机账号
+			 */
+			function getAccount(){ 
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM002"
+				};
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							act = data.cms;
+							
+						}else if(data.cbm=='ERR'){
+//							mui.toast(dictRes[resType]["allPage002"]);
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 注册账号
+			 */
+			function userRegister(pwd){
+				console.log("======>"+act);
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM004",
+					"addr":act,
+					"pwd":pwd
+				};
+				argin = JSON.stringify(argin);
+				console.log(url);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							plus.storage.setItem("account",act);
+							plus.storage.setItem("isActive","0");
+							plus.storage.removeItem('jsonst');
+							mui.toast(dictRes[resType]["register001"]);
+							mui.openWindow({
+								url: 'QR_code.html',
+								extras: {
+									pwd:pwd
+								}
+							});
+						}else if(data.cbm=="ERR"){
+							if(data.cms=="RSE003"){
+								mui.toast(dictRes[resType]["RSE003"]);
+							}else{
+								mui.toast(data.codeout+data.cms);
+								mui.back();
+							}
+				
+						}
+						
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>

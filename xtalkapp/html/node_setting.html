@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/node_setting.css" />
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-pull-left">
+				<img src="../img/back.png"/>
+			</a>
+			<h1 id="set" class="mui-title">系统设置</h1>
+			<a id="add_node" class="mui-icon mui-icon-plusempty mui-pull-right"></a>
+		</header>
+		<div class="mui-content">
+			<ul id="node_list" class="mui-table-view mui-table-view-radio" style="padding-bottom: 40px;">
+				<li class="mui-table-view-cell" id="default_node">
+					<a class="mui-navigate-right">
+						<div class="node_speed">
+							<img src="../img/node.png" /> 
+							<div class="ethcloud"></div>
+						</div>
+						<div class="node_first"><span id="nodeDetail">节点描述：</span><span id="gray" class="gray">以太云1</span></div>
+						<div class="node_second"><span id="nodeAddr">节点地址：</span><span class="gray">http://182.150.37.23:8888</span></div>
+					</a>
+				</li>
+				<li class="mui-table-view-cell" id="default_node2">
+					<a class="mui-navigate-right">
+						<div class="node_speed">
+							<img src="../img/node.png" /> 
+							<div class="ethcloud"></div>
+						</div>
+						<div class="node_first"><span id="nodeDetail2">节点描述：</span><span id="gray2" class="gray">以太云2</span></div>
+						<div class="node_second"><span id="nodeAddr2">节点地址：</span><span class="gray">http://182.150.37.24:8888</span></div>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/changelanguage/chinese.js"></script>
+	<script src="../js/changelanguage/english.js"></script>
+	<script src="../js/changelanguage/TraditionalChinese.js"></script>
+	<script src="../js/changelanguage/Korean.js"></script>
+	<script src="../js/changelanguage/Japanese.js"></script>
+	<script src="../js/changelanguage/Tibetan.js"></script>
+	<script src="../js/changelanguage/changeLanguage.js"></script>
+	<script type="text/javascript">
+		var argin, url, node_content;
+		var resType;
+		mui.plusReady(function() {
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"set","RID":"nodeset001","ATYPE":1},
+							{"TID":"nodeDetail","RID":"nodeset002","ATYPE":1},
+							{"TID":"nodeAddr","RID":"nodeset003","ATYPE":1},
+							{"TID":"gray","RID":"allPage008","ATYPE":1},
+							{"TID":"nodeDetail2","RID":"nodeset002","ATYPE":1},
+							{"TID":"nodeAddr2","RID":"nodeset003","ATYPE":1},
+							{"TID":"gray2","RID":"allPage024","ATYPE":1}]
+			resReplace(resType, changeLan);
+			
+//			url = plus.storage.getItem("url");
+			node_content = plus.storage.getItem("node_content");
+			var first_li = document.getElementById("default_node");
+			first_li.describe = "default";
+			first_li.num = 0;
+			first_li.addr = "182.150.37.23";
+			first_li.port = "8888";
+			var second_li = document.getElementById("default_node2");
+			second_li.describe = "default";
+			second_li.num = 1;
+			second_li.addr = "182.150.37.24";
+			second_li.port = "8888";
+			getNodelist();
+			getAllnodespeed();
+			selectNode();
+			deletNode();
+		});
+		mui.init({
+		  	gestureConfig:{
+			   	longtap: true, //默认为false
+		  	}
+		});
+		/*
+		 * 删除节点
+		 */
+		function deletNode(){
+			(function($) {
+				$('#node_list').on('longtap', '.mui-table-view-cell', function(event) {
+					var li = this;
+					var li_num = li.num - 2;
+					if(li.describe == "default"){
+						mui.toast(dictRes[resType]["allPage009"]);
+						return;
+					}
+					mui.confirm(dictRes[resType]["allPage010"], dictRes[resType]["allPage011"], btnArray, function(e) {
+						if (e.index == 0) {
+							node_content.splice(li_num,1);
+							node_content = JSON.stringify(node_content);
+							plus.storage.setItem("node_content",node_content);
+							if(li.classList.contains("mui-selected")){
+								document.getElementsByClassName("mui-table-view-cell")[0].className = "mui-table-view-cell mui-selected";
+								plus.storage.setItem("select_num","0");
+								plus.storage.setItem("url","http://182.150.37.23:8888/");
+								mui.fire(plus.webview.currentWebview().opener(),'geturl',{
+								    url:"http://182.150.37.23:8888/"
+								});
+							}
+							li.parentNode.removeChild(li);
+							var alls_lis = document.getElementsByClassName("mui-table-view-cell");
+							node_content = JSON.parse(node_content);
+							for(i=li_num+2; i<alls_lis.length; i++){
+								alls_lis[i].num = i;
+							}
+						} else {
+							return;
+						}
+					});
+				});
+				var btnArray = [dictRes[resType]["allPage012"], dictRes[resType]["allPage013"]]; 
+			})(mui);
+		}
+		
+		/*
+		 * 节点网速获取
+		 */
+		function getNodespeed(url,li){
+			var nowDate = new Date().getTime();
+			console.log(nowDate);
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM001"
+			};
+			argin = JSON.stringify(argin); 
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 2000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						var newDate = new Date().getTime();	
+						li.getElementsByClassName("ethcloud")[0].innerText = parseInt((newDate - nowDate)/2) + "ms";
+						li.isvalid = 1;
+					}else{
+						li.isvalid = 0;
+						li.getElementsByClassName("ethcloud")[0].innerText = "xx";
+						li.getElementsByClassName("ethcloud")[0].style.color = "red";
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					li.isvalid = 0;
+					li.getElementsByClassName("ethcloud")[0].innerText = "xx";
+					li.getElementsByClassName("ethcloud")[0].style.color = "red";
+					console.log(type);
+					
+				}
+			});
+		}
+		/*
+		 * 节点列表获取
+		 */
+		function getNodelist(){
+			if(!node_content){
+				return;
+			}
+			var node_list = document.getElementById("node_list");
+			console.log(node_content); 
+			node_content = JSON.parse(node_content);
+			var node_length = node_content.length;
+			for(i=0; i<node_length; i++){
+				var node_name = node_content[i].node_name;
+				var node_addr = node_content[i].node_addr;
+				var li = document.createElement("li");
+				li.className = "mui-table-view-cell";
+				li.addr = node_addr;
+				li.port = node_content[i].node_port;
+				li.num = i + 2;
+				li.innerHTML = '<a class="mui-navigate-right"><div class="node_speed"><img src="../img/node.png" /><div class="ethcloud"></div></div><div class="node_first"><span>'+dictRes[resType]["nodeset002"]+'</span><span class="gray">'+node_name+'</span></div><div class="node_second"><span>'+dictRes[resType]["nodeset003"]+'</span><span class="gray">http://'+node_addr+'</span></div></a>';
+				node_list.appendChild(li);
+			}
+			
+		}
+		/*
+		 * 添加节点刷新
+		 */
+		window.addEventListener("refreshpage",function(event){
+			node_content = event.detail.node_content;
+			node_content = JSON.parse(node_content);
+			var node_contents = event.detail.node_contents;
+			refreshNode(node_contents);
+		});
+		/*
+		 * 刷新节点
+		 */
+		function refreshNode(node_contents){
+			var node_list = document.getElementById("node_list");
+			var node_length = node_contents.length;
+			for(i=0; i<node_length; i++){
+				var node_name = node_contents[i].node_name;
+				var node_addr = node_contents[i].node_addr;
+				var li = document.createElement("li");
+				li.className = "mui-table-view-cell";
+				li.addr = node_addr;
+				li.port = node_contents[i].node_port;
+				li.num = document.getElementsByClassName("mui-table-view-cell").length;
+				li.innerHTML = '<a class="mui-navigate-right"><div class="node_speed"><img src="../img/node.png" /><div class="ethcloud"></div></div><div class="node_first"><span>'+dictRes[resType]["nodeset002"]+'</span><span class="gray">'+node_name+'</span></div><div class="node_second"><span>'+dictRes[resType]["nodeset003"]+'</span><span class="gray">http://'+node_addr+'</span></div></a>';
+				node_list.appendChild(li);
+				console.log(li.num);
+				urls = "http://" + li.addr + ":" + li.port +"/";
+				getNodespeed(urls,li);
+			}
+			
+		}
+		/*
+		 * 所有节点网速获取
+		 */
+		function getAllnodespeed(){
+			var node_lis = document.getElementsByClassName("mui-table-view-cell");
+			var lis_length = node_lis.length;
+			for(i=0; i<lis_length; i++){
+				urls = "http://" + node_lis[i].addr + ":" + node_lis[i].port +"/";
+				getNodespeed(urls,node_lis[i]);
+			}
+			
+		}
+		/*
+		 * 节点选择
+		 */
+		function selectNode(){
+			var select_num = plus.storage.getItem("select_num");
+			var all_lis = document.getElementsByClassName("mui-table-view-cell");
+			var list = document.querySelector('.mui-table-view.mui-table-view-radio');
+			if(!select_num){
+				all_lis[0].className = "mui-table-view-cell mui-selected";
+			}else{
+				all_lis[select_num].className = "mui-table-view-cell mui-selected";
+			}
+			list.addEventListener('selected',function(e){
+				if(e.detail.el.isvalid == 0){
+					mui.toast(dictRes[resType]["nodeset004"]); 
+					e.detail.el.className = "mui-table-view-cell";
+					if(!select_num){
+						all_lis[0].className = "mui-table-view-cell mui-selected";
+					}else{
+						all_lis[select_num].className = "mui-table-view-cell mui-selected";
+					}
+					return; 
+				}
+				url = "http://" + e.detail.el.addr + ":" + e.detail.el.port +"/";
+				select_num = e.detail.el.num;
+				plus.storage.setItem("select_num",e.detail.el.num + "");
+				plus.storage.setItem("url",url);
+				console.log("当前选中的为："+e.detail.el.num);
+				console.log(plus.storage.getItem("url"));
+				mui.fire(plus.webview.currentWebview().opener(),'geturl',{
+				    url:url
+				});
+			});
+		}
+		/*
+		 * 添加节点页面跳转
+		 */
+		document.getElementById("add_node").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'add_node.html'
+			});
+		});
+	</script>
+
+</html>

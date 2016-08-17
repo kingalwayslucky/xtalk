@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href="../css/mui.min.css" rel="stylesheet"/>
+    <link href="../css/message_us.css" rel="stylesheet" />
+    	<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+			#holder {
+				width: 300px;
+				height: 300px;
+				/*border: solid 1px #bbb;*/
+				/*border-radius: 5px;*/
+				margin: 0px auto;
+				margin-bottom: 0px;
+				/*background-color: #fff;*/
+			}
+			#alert {
+				text-align: center;
+				padding: 20px 10px;
+				margin-top: 100px;
+				color: #e73a33;
+			}
+			#mask_pwd{
+				display: none; 
+				z-index: 999; 
+				text-align: center; 
+				position: fixed;
+				top: 0;
+				bottom:0;
+				width: 100%;
+				/*height: 380px;*/
+				/*margin-left: 5%;*/
+				background-color: #1E2E3E;
+			}
+			#back{
+				font-size: 40px;
+				color: #B0B7C1;
+				margin-top: 5px;
+				margin-left: 5px;
+			}
+		</style>
+</head>
+<body>
+	<header id="header" class="mui-bar mui-bar-nav">
+		<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"><span style="font-size: 16px;"></span></a>
+		<a id="setting" class="mui-icon mui-icon-person mui-pull-right"></a>
+		<h1 id="title" class="mui-title"></h1>
+	</header>
+	<div id="content" class="mui-content">
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll" style="margin-top: 44px;">
+				<div id="chat_list_div">
+					<!--<div id="clock" class="chat_time">
+						2016年03月13日15:00
+					</div>
+					<div class="my_send_div chat_div">
+						<img class="head_pic" src="../img/myhead.jpg" />
+						<div class="nameandcontent">
+							<p class="name"></p>
+							<div class="content">
+								<div class="jian"></div>
+								周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。周末有时间吗？一起吃个饭。
+							</div>
+						</div>
+					</div>
+					<div class="other_send_div chat_div">
+						<img class="head_pic headpic" src="../img/headpic_1.jpg" />
+						<div class="nameandcontent">
+							<p class="name mark"></p>
+							<div class="content">
+								<div class="jian"></div>
+								有啊，正愁周末没事干。
+							</div>
+						</div>
+					</div>
+					<div class="my_send_div chat_div">
+						<img class="head_pic" src="../img/myhead.jpg" />
+						<div class="nameandcontent">
+							<p class="name"></p>
+							<div class="content">
+								<div class="jian"></div>
+								行，周末见。
+							</div>
+						</div>
+					</div>
+					<div class="other_send_div chat_div">
+						<img class="head_pic headpic" src="" />
+						<div class="nameandcontent">
+							<p class="name mark"></p>
+							<div class="content">
+								<div class="jian"></div>
+								好的
+							</div>   
+						</div>
+					</div>-->
+					<!--<p id="history_p">查看更多历史</p>-->
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	<div id="mask_div">
+		<div>
+			<p id="Mon" style="color:red;">转账</p>
+			<p id="Mes">消息购买</p>
+		</div>
+		<div id="MonC">
+			<input id="zname" type="text" readonly="readonly"/>
+			<input id="zmoney"  type="tel" placeholder="金额" />
+			<input id="zmsg" type="text"  placeholder="留言">
+			<button id="zbutton">确认转账</button>
+		</div>
+		<div id="MesC">
+			<div id="msg_num"></div>
+			<div id="sub">-</div>
+			<input id="num_money"  type="tel" style="text-align: center;"/>
+			<div id="add">+</div>
+			<div id="num_in">购买条数为：10</div>
+			<div id="num_ratio">当前购买消息比例为1:10</div>
+			<button id="num_button">确认购买</button>
+		</div>
+		<a id="zclose" class="mui-icon mui-icon-close" ></a>
+	</div>
+	<nav id="nav" class="mui-bar"> 
+		<div id="zhuan"><img src="../img/+3.png"/></div>
+		<input id="text_input" type="text" placeholder="说些什么吧……" />
+		<div id="send_btn"><img src="../img/+4.png"/></div>
+	</nav> 
+	<div id="mask_pwd">
+		<a id="back" class="mui-icon mui-icon-closeempty mui-pull-left"></a> 
+		<div id='alert'>请输入手势密码</div>
+		<div id='holder' class="mui-locker" data-locker-options='{"ringColor":"rgba(255,255,255,1)","fillColor":"rgba(41,57,72,.9)","pointColor":"rgba(231,58,51,1)","lineColor":"rgba(231,58,51,1)"}' data-locker-width='300' data-locker-height='300'></div>
+	</div>
+	
+</body>
+<script src="../js/mui.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/mui.locker.js"></script>
+<script>
+	var pwd_mask, mask, user_id, names, url, act, pwd, 
+		msg, chat_list, headpic, chats, div, isActive, 
+		msg_pwd, mid, cmses, from, froms;//froms:手势来源判断
+	var start = "0";
+	var count = "100";
+	var iscode = 0;
+	mui.plusReady(function() {
+		names = plus.webview.currentWebview().name;
+	 	user_id=plus.webview.currentWebview().user_id;
+	 	url = plus.storage.getItem("url");
+	 	pwd = plus.webview.getWebviewById("home").pwd;
+	 	act = plus.storage.getItem("account");
+	 	isActive = plus.storage.getItem("isActive");
+	 	chat_list = document.getElementById("chat_list_div");
+		document.getElementById("zname").value=names;
+		headpic = plus.webview.currentWebview().headpic;
+		document.getElementById("num_money").value = 1;
+		getName();
+		getMessagelist(); 
+	});
+//		mui('.mui-scroll-wrapper').scroll({
+//			deceleration: 0.0005 //flick 减速系数，系数越大，滚动速度越慢，滚动距离越小，默认值0.0006
+//		}); 
+		/*
+		 * 手势密码遮罩
+		 */
+		pwd_mask=mui.createMask(function(){
+			document.getElementById("mask_pwd").style.display='none';
+		});
+		document.getElementById("back").addEventListener("tap",function(){
+			pwd_mask.close();
+			document.getElementById("mask_pwd").style.display='none';
+		});
+		/*
+		 * 消息解码
+		 */
+		(function($, doc) {
+			$.init({
+			  	gestureConfig:{
+				   	longtap: true, //默认为false
+			  	}
+			});
+			$('#chat_list_div').on('longtap', '.chat_div', function(event) {
+				div = this;
+				mui.confirm('确认删除该条记录？', '嘘', btnArray, function(e) {
+					if (e.index == 0) {
+						deleteMsg();
+					} else {
+						return;
+					}
+				});
+			});
+			var btnArray = ['确认', '取消']; 
+			$('#chat_list_div').on('tap', '.chat_div', function(event) {
+				froms = "messages";
+				div = this;
+				if(this.code==1){
+					return
+				}
+				if(isActive != 1){
+					this.code=1;
+					pwd_mask.show();
+					document.getElementById("mask_pwd").style.display='block';
+				}
+			});
+			var holder = doc.querySelector('#holder'),
+				alert = doc.querySelector('#alert'),
+				record = [];
+			//处理事件
+			holder.addEventListener('done', function(event) {
+				var rs = event.detail;
+				if (rs.points.length < 4) {
+					mui.toast("输入的手势密码太简单了~");
+					record = [];
+					rs.sender.clear();
+					return;
+				}
+				record.push(rs.points.join(''));
+				console.log(record);
+				rs.sender.clear();
+				if(record[record.length-1] == pwd){
+					if(froms == "messages"){
+						iscode = 1;
+						inputPsw();
+					}else{
+						changeMoney();
+					}
+					
+					pwd_mask.close();
+					document.getElementById("mask_pwd").style.display='none';
+				}else{
+					mui.toast("密码错误~");
+				}
+			});
+		})(mui, document);
+		function inputPsw(){
+			if(isActive ==1){
+				if(from == "send"){
+					mid = cmses;
+				}else{
+					mid = msg_pwd;
+				}
+			}else{
+				mid = div.mid;
+			}
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM016",
+				"addr":act,
+				"pwd":pwd,
+				"mid":mid
+			};
+			argin = JSON.stringify(argin);
+			mui.ajax(url + "api", {
+				async:false,
+				data: { 
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){ 
+						var cms = JSON.parse(data.cms);
+						var new_msg = cms.msg;
+						if(isActive == 1){
+							if(from == "send"){
+								cmses = new_msg;
+							}else{
+								msg_pwd = new_msg;
+							}
+						}else{
+							div.getElementsByClassName("content")[0].innerHTML ='<div class="jian"></div>' + new_msg;
+						}	
+					} 
+				},
+				error: function(xhr, type, errorThrown) {
+					console.log(type);
+				} 
+			});
+		}
+		/*
+		 * 消息删除
+		 */
+		function deleteMsg(){
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM017",
+				"addr":act,
+				"pwd":pwd,
+				"mid":div.mid
+			};
+			argin = JSON.stringify(argin);
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){ 
+						div.parentNode.removeChild(div);
+					} 
+				},
+				error: function(xhr, type, errorThrown) {
+					console.log(type);
+				} 
+			});
+		}
+		/*
+		 * 转账遮罩
+		 */
+		mask=mui.createMask(function(){
+			document.getElementById("mask_div").style.display='none';
+		});
+		document.getElementById("zhuan").addEventListener('tap',function(){
+			mask.show();
+			document.getElementById("mask_div").style.display='block';
+			freshMoney();
+		});	
+		document.getElementById("zclose").addEventListener('tap',function(){
+			mask.close();
+			document.getElementById("mask_div").style.display='none';
+		});
+		/*
+		 * 转账手势验证
+		 */
+		document.getElementById("zbutton").addEventListener("tap",function(){
+			froms = "changeMoney";
+			if(document.getElementById("zmoney").value == ""){
+				mui.toast("转账金额不能为空~");
+				return;
+			}
+			pwd_mask.show();
+			document.getElementById("mask_pwd").style.display='block';
+			
+		});
+		/*
+		 * 转账
+		 */
+		function changeMoney(){
+			var tomoney = document.getElementById("zmoney").value;
+			var t_msg = document.getElementById("zmsg").value;
+			argin = { 
+				"version":"0.0.3",
+				"codein":"BM007",
+				"from":act,
+				"frompwd":pwd,
+				"to":user_id,
+				"money":tomoney,
+				"msg":t_msg
+			};
+			argin = JSON.stringify(argin);
+			console.log(argin);
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						mask.close();
+						document.getElementById("mask_div").style.display='none';
+						mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh");
+						mui.fire(plus.webview.getWebviewById("html/Transaction/transaction.html"),"reloadlist");
+						mui.toast("转账成功~")
+					} 
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast("请检查您的网络设置~");
+					console.log(type);
+				}
+			});
+		}
+		/*
+		 * 本地备注替换
+		 */
+		function getName(){
+			var name='未知';
+			var index;
+			data=plus.storage.getItem('jsonst');
+			console.log(data);
+			console.log(user_id);
+			if(!data){
+				data='未知';
+				return
+			}
+			data=JSON.parse(data);
+			for(var i=0;i<data.length;i++){
+				if(data[i].id==user_id){
+					index=i;
+				}else{
+					
+				}
+			}
+			console.log(index);
+			console.log(data.length);
+			if(index==undefined){
+				var user_name=name;
+			}else{
+				var user_name=data[index].remark;
+			}
+//			if('remark' in data[index]){
+//				var user_name=data[index].remark;
+//				console.log("111");
+//			}else{
+//				console.log("222");
+//				var user_name=name;
+//			}
+			
+			document.getElementById("title").innerText=user_name;
+		}
+		/*
+		 * 修改备注
+		 */
+		document.getElementById("setting").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'chat_setting.html', 
+				extras:{
+					name: names,
+					user_id:user_id,
+					headpic:headpic
+				}
+			});
+		})
+		/*
+		 * 刷新页面
+		 */
+		window.addEventListener('refresh', function(e){
+			console.log('备注更改');
+			console.log(e.detail.headpic);
+			if(e.detail.headpic==undefined){ 
+				console.log("不用执行");
+			}else{
+				var headspic=JSON.stringify(e.detail.headpic);
+				headspic=JSON.parse(headspic)
+				console.log(headspic.length);
+				getChangePic(headspic);
+				getName(); 
+			}
+			
+		});
+		/*
+		 *获取更改头像
+		 */
+		function getChangePic(from){
+			var heads = document.getElementsByClassName("head_pic headpic");
+			console.log(heads.length+'hhhhhhhhhh'+from);
+			for(var j=0;j<heads.length;j++){
+				heads[j].src=from;
+				console.log('---------------'+heads[j].src);
+			}
+		}
+		/*
+		 * 获取消息列表
+		 */
+		function getMessagelist(){
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM015",
+				"addr":act,
+				"pwd":pwd,
+				"target":user_id,
+				"start":start,
+				"count":count
+			};
+			console.log('----------'+act+'----------'+pwd+user_id);
+			argin = JSON.stringify(argin); 
+			console.log(argin);
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){ 
+						var cms = JSON.parse(data.cms);
+						var msgs_length = cms.msgs.length;
+						for(i=0; i<msgs_length; i++){
+							var from_addr = cms.msgs[i].from;
+							msg_pwd = cms.msgs[i].mid;
+							var msgdate = cms.msgs[i].msgdate;
+							var msg_divs = document.createElement("div");
+							msg_divs.mid = msg_pwd;
+							if(isActive == 1){
+								inputPsw();
+							}
+							if(from_addr == act){
+								msg_divs.className = "my_send_div chat_div";
+								msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic" src="../img/myhead.jpg" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+								chat_list.appendChild(msg_divs);
+							}else{
+								msg_divs.className = "other_send_div chat_div";
+								msg_divs.innerHTML = '<div id="clock" class="chat_time">'+msgdate+'</div><img class="head_pic headpic" src="" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+msg_pwd+'</div></div>';
+								chat_list.appendChild(msg_divs);
+							}
+						}
+						mui('.mui-scroll-wrapper').scroll().scrollToBottom(10);
+						chats= document.getElementById("content").getElementsByClassName('content');
+						headTihuan();
+					} 
+				},
+				error: function(xhr, type, errorThrown) {
+					console.log(type);
+				} 
+			});
+		}
+		/*
+		 * 发送消息
+		 */
+		document.getElementById("send_btn").addEventListener("tap",function(){
+			msg = document.getElementById("text_input").value;
+			if(msg == ""){
+				mui.toast("消息内容不能为空~");
+				return;
+			}
+			sendMessage();
+		});
+		function sendMessage(){
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM014",
+				"addr":act,
+				"pwd":pwd,
+				"target":user_id,
+				"msg":msg
+			};
+			argin = JSON.stringify(argin); 
+			console.log(argin); 
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						document.getElementById("text_input").value = "";
+						cmses = data.cms;
+						var msg_div = document.createElement("div");
+						var dates = new Date();
+						console.log(dates);
+						dates = dates.getFullYear()+'-'+'0'+(dates.getMonth()+1)+'-'+'0'+dates.getDate()+' '+dates.getHours()+':'+dates.getMinutes()+':'+dates.getSeconds();
+						msg_div.mid = cmses;
+						msg_div.className = "my_send_div chat_div";
+						if(isActive == 1){
+							from = "send";
+							inputPsw();
+						}
+						msg_div.innerHTML = '<div id="clock" class="chat_time">'+dates+'</div><img class="head_pic" src="../img/myhead.jpg" /><div class="nameandcontent"><div class="content"><div class="jian"></div>'+cmses+'</div></div>';
+						chat_list.appendChild(msg_div);
+						mui('.mui-scroll-wrapper').scroll().scrollToBottom(10);
+						mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh");
+					}else if(data.cbm == "ERR"){
+						if(data.cms == "检查消息可用条数是否足够"){
+							mui.toast("消息条数不足，请购买~");
+						}else{
+							mui.toast("请检查您的网络设置~");
+						} 
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast("请检查您的网络设置~");
+					console.log(type);
+				}
+			});
+		}
+		/*
+		 * 头像替换
+		 */
+		function headTihuan(){
+			var headpic_all = document.getElementsByClassName("headpic");
+			console.log("==============="+headpic_all.length);
+			var headpic_length = headpic_all.length;
+			console.log(headpic);
+			if(headpic=='../../img/i5.png'){
+				headpic='../img/i5.png';
+			}
+			for(i=0; i<headpic_length; i++){
+				headpic_all[i].src = headpic;
+				console.log("================>"+headpic_all[i].src);
+			}
+		}
+		/*
+		 * 转账，消息购买tab切换
+		 */
+		document.getElementById("Mon").addEventListener("tap",function(){
+			document.getElementById("Mon").style.color = "red";
+			document.getElementById("Mes").style.color = "black";
+			document.getElementById("MonC").style.display = "block";
+			document.getElementById("MesC").style.display = "none";
+		});
+		document.getElementById("Mes").addEventListener("tap",function(){
+			document.getElementById("Mon").style.color = "black";
+			document.getElementById("Mes").style.color = "red";
+			document.getElementById("MesC").style.display = "block";
+			document.getElementById("MonC").style.display = "none";
+		})
+		/*
+		 * 购买消息
+		 */
+		function buyMessage(money_num){
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM018",
+				"addr":act,
+				"pwd":pwd,
+				"money":money_num
+			};
+			argin = JSON.stringify(argin); 
+			console.log(argin); 
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.cbm == "OK"){
+						mask.close();
+						document.getElementById("mask_div").style.display='none';
+						mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh");
+						mui.fire(plus.webview.getWebviewById("account.html"),"sendFresh"); 
+						mui.toast("购买成功~");
+					}else if(data.cbm == "ERR"){
+						if(data.cms == "检查消息可用条数是否足够"){
+							mui.toast("余额不足~");
+						}else{
+							mui.toast("请检查您的网络设置~");
+						} 
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast("请检查您的网络设置~");
+					console.log(type);
+				}
+			});
+		}
+		/*
+		 * 购买消息条数计算
+		 */
+		document.getElementById("num_money").addEventListener("keyup",function(){
+			var money_num = document.getElementById("num_money").value;
+			document.getElementById("num_in").innerText = "购买条数为：" + money_num*10;
+		})
+		document.getElementById("sub").addEventListener("tap",function(){
+			var money_num = document.getElementById("num_money").value;
+			if(money_num<1 || money_num == ""){
+				return;
+			}
+			document.getElementById("num_money").value = money_num - 1;
+			document.getElementById("num_in").innerText = "购买条数为：" + document.getElementById("num_money").value*10;
+		});
+		document.getElementById("add").addEventListener("tap",function(){
+			var money_num = document.getElementById("num_money").value;
+			if(money_num == ""){
+				document.getElementById("num_money").value = 1;
+			}else{
+				document.getElementById("num_money").value = parseInt(money_num) + 1;
+			}
+			document.getElementById("num_in").innerText = "购买条数为：" + document.getElementById("num_money").value*10;
+		})
+		document.getElementById("num_button").addEventListener("tap",function(){
+			var money_num = document.getElementById("num_money").value;
+			buyMessage(money_num);
+		});
+		/*
+		 * 消息书刷新
+		 */
+		function freshMoney(){
+			argin = {
+				"version":"0.0.3",
+				"codein":"BM005",
+				"addr":act,
+				"pwd":pwd
+			};
+			argin = JSON.stringify(argin);
+			mui.ajax(url + "api", {
+				data: {
+					argin: argin
+				},
+				dataType: 'json',
+				type: 'get',
+				timeout: 10000,
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					console.log(data.cms);
+					if(data.cbm == "OK"){
+						document.getElementById("msg_num").innerText = "当前消息条数：" + JSON.parse(data.cms).msgtotal;
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					mui.toast("请检查您的网络设置~");
+					console.log(type);
+				}
+			});
+		}
+</script>
+</html>

@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="../../css/mui.min.css">
+		<!--App自定义的css-->
+		<!--<link rel="stylesheet" type="text/css" href="../css/app.css" />-->
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+				background-color: #1E2E3E;
+			}
+			.mui-content {
+			    background-color: #242529;
+			}
+			#holder {
+				width: 300px;
+				height: 300px;
+				/*border: solid 1px #bbb;*/
+				/*border-radius: 5px;*/
+				margin: 0px auto;
+				margin-bottom: 0px;
+				/*background-color: #fff;*/
+			}
+			#alert {
+				text-align: center;
+				padding: 20px 10px;
+				margin-top: 100px;
+				color: #e73a33;
+			}
+			#setting {
+				font-size: 40px;
+				color: #B0B7C1;
+			}
+		</style>
+	</head>
+
+	<body>
+		<a id="setting" class="mui-action-back mui-icon mui-icon-closeempty mui-pull-left"></a>
+		<div id='alert'>请输入您的旧手势密码</div>
+		<div id='holder' class="mui-locker" data-locker-options='{"ringColor":"rgba(255,255,255,1)","fillColor":"rgba(41,57,72,.9)","pointColor":"rgba(231,58,51,1)","lineColor":"rgba(231,58,51,1)"}' data-locker-width='300' data-locker-height='300'></div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/mui.locker.js"></script>
+		<script src="../../js/changelanguage/chinese.js"></script>
+		<script src="../../js/changelanguage/english.js"></script>
+		<script src="../../js/changelanguage/TraditionalChinese.js"></script>
+		<script src="../../js/changelanguage/Korean.js"></script>
+		<script src="../../js/changelanguage/Japanese.js"></script>
+		<script src="../../js/changelanguage/Tibetan.js"></script>
+		<script src="../../js/changelanguage/changeLanguage.js"></script>
+		<script>
+			var from, url, act, pwd;
+			var resType;
+			mui.plusReady(function() {
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"alert","RID":"changepsw001","ATYPE":1}]
+				resReplace(resType, changeLan);
+				
+				url = plus.storage.getItem("url");
+				act = plus.storage.getItem("account");
+				pwd = plus.webview.getWebviewById("home").pwd;
+			});
+			(function($, doc) {
+				$.init();
+				var holder = doc.querySelector('#holder'),
+					alert = doc.querySelector('#alert'),
+					record = [];
+				//处理事件
+				holder.addEventListener('done', function(event) {
+					var rs = event.detail;
+					if (rs.points.length < 4) {
+						mui.toast(dictRes[resType]["allPage001"]);
+						alert.innerText = dictRes[resType]["changepsw001"];
+						record = [];
+						rs.sender.clear();
+						return;
+					}
+					console.log(rs.points.join(''));
+					record.push(rs.points.join(''));
+					console.log(record);
+					if (record.length >= 3) {
+						if (record[1] == record[2]) {
+							console.log(record[0]);
+							changePsw(record[0],record[2]);
+						} else {
+							mui.toast(dictRes[resType]["allPage006"]);
+							alert.innerText = dictRes[resType]["changepsw001"];
+						}
+						rs.sender.clear();
+						record = [];
+					} else if(record.length == 1){
+						if(record[0] != pwd){
+							rs.sender.clear();
+							record = [];
+							mui.toast(dictRes[resType]["allPage002"]);
+						}else{
+							alert.innerText = dictRes[resType]["changepsw002"];
+							rs.sender.clear();
+						}
+					} else if(record.length == 2) {
+						alert.innerText = dictRes[resType]["changepsw003"];
+						rs.sender.clear();
+					}
+				});
+			}(mui, document));
+			/*
+			 * 修改密码
+			 */
+			function changePsw(oldpwd,newpwd){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM006",
+					"addr":act,
+					"pwdold":oldpwd,
+					"pwdnew":newpwd
+				};
+				argin = JSON.stringify(argin);
+				console.log(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.cbm == "OK"){
+							mui.toast(dictRes[resType]["changepsw004"]);
+							mui.back();
+						}else{
+							mui.toast(dictRes[resType]["allPage003"])
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+		</script>
+	</body>
+
+</html>
