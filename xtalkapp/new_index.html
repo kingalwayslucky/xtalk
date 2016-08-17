@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--App自定义的css-->
+		<!--<link rel="stylesheet" type="text/css" href="../css/app.css" />-->
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+				/*background: url(img/index_003.jpg);*/
+				background-size: cover;
+			}
+			a {
+				color: rgba(255, 255, 255, .5);
+				margin-right: 10px;
+				margin-top: 10px;
+			}
+			a:active{
+				color: rgba(255, 255, 255, .2);
+			}
+			.mui-content {
+			    background-color: #242529;
+			}
+			#holder {
+				width: 300px;
+				height: 300px;
+				margin: 150px auto;
+				margin-bottom: 0px;
+			}
+			#alert {
+				text-align: center;
+				padding: 20px 10px;
+			}
+			#action_p {
+				width: 240px;
+				margin: 10px auto 20px auto;
+				font-size: 14px;
+				color: rgba(255, 255, 255, .5);
+			}
+			.clear {
+				clear: both;
+			}
+			.copy {
+				position: fixed;
+				bottom: 15px;
+				width: 100%;
+				font-size: 10px;
+				color: rgba(255, 255, 255, .2);
+				text-align: center;
+				margin-top: 40px;
+			}
+			.copy img{
+				height: 20px;
+			}
+			#total_money,
+			#total_user {
+				display: inline-block;
+				font-size: 12px;
+				color: white;
+				margin-top: 8px;
+				margin-left: 15px;
+			}
+			#total_money img{
+				height: 15px;
+				width: 15px;
+			}
+			#total_user img{
+				height: 15px;
+				width: 15px;
+			}
+			#total_money p{
+				display: inline-block;
+			}
+			#total_user p{
+				display: inline-block;
+			}
+			#setting{
+				opacity: 0.5;
+				width: 40px;
+				height: 40px;
+				text-align: center;
+				line-height: 40px;
+				margin-top: 1px;
+			}
+			#language{
+				position: absolute;
+				padding: 10px;
+				width: 40px;
+				height: 40px;
+				top: 1px;
+				right: 50px;
+			}
+			#guide{
+				position: fixed;height: 18%;width: 100%;bottom: 14%;display: none;
+			}
+			#guide_infor{
+				display: inline-block;width: 100%;text-align: center;font-size: 14px;color: #FFFFFF;opacity: 0.8;
+			}
+			#btn_content{
+				display: inline-block;width: 100%;text-align: center;margin-top: 15px;
+			}
+			#btn_had{
+				display: inline-block;float: left; width: 50%;height: 60px;
+			}
+			#had{
+				font-size: 15px; background-color: #435768;border: none;color: #F0F0F0; height: 50px; width: 90%;margin-left: 5%;	
+			}
+			#btn_register{
+				display: inline-block;float: left; width: 50%;height: 60px;
+			}
+			#register_before{
+				font-size: 15px; background-color: #E73A33;border: none;color: #F0F0F0; height: 50px; width: 90%;margin-right: 5%;
+			}
+			#bgimg{
+				position: absolute;width: 100%;height: 100%;z-index: -1;
+			}
+			#register_l {
+				font-size: 16px;
+			}
+			#forgetpsw_l {
+				font-size: 16px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<img id="bgimg" src="img/index_003.jpg"/>
+		<a id="setting" class="mui-icon mui-icon-gear mui-pull-right"></a>
+		<img id="language" src="img/language.png"/>
+		<div id="total_user"><img src="img/Index3_06-02.png"/> <p id="total_user_span"></p></div>
+		<!--<div id="total_money"><img src="img/Index3_06-03.png"/> <p id="total_money_span"></p></div>-->
+		<div id="langues"></div>
+		<div id='holder' style="display: none;" class="mui-locker" data-locker-options='{"ringColor":"rgba(255,255,255,1)","fillColor":"rgba(41,57,72,.9)","pointColor":"rgba(231,58,51,1)","lineColor":"rgba(231,58,51,1)"}' data-locker-width='300' data-locker-height='300'></div>
+		<!--<div id='alert'></div>-->
+		<div id="guide">
+			<div id="guide_infor">欢迎！如首次使用请注册账号</div>
+			<div id="btn_content">
+			<div id="btn_had"><button id="had">已有账号</button></div>
+			<div id="btn_register"><button id="register_before">立即注册</button></div>
+			</div>
+		</div> 
+		<div id="action_p" style="display: none;">
+			<label id="register_l" style="float: left;">注册帐号</label>
+			<label id="forgetpsw_l" style="float: right;">导入账号</label>
+			<div class="clear"></div>
+		</div>
+		<div class="copy">
+			<!--<table style="width: 100%;"> 
+				<tr><td><img  src="img/copyright (2).png"/></td><td>以太云出品</td></tr>
+				
+			</table>-->
+			<div id="copyright">嘘v1.0.0版权所有</div>
+			<div style="font-size: 8px;line-height: 8px;">Copyright&copy;2008 Powered By Chat</div>
+		</div>
+
+		<script src="js/mui.min.js"></script>
+		<script src="js/backquit.js"></script>
+		<script src="js/mui.locker.js"></script>
+		<script src="js/changelanguage/chinese.js"></script>
+		<script src="js/changelanguage/english.js"></script>
+		<script src="js/changelanguage/TraditionalChinese.js"></script>
+		<script src="js/changelanguage/Korean.js"></script>
+		<script src="js/changelanguage/Japanese.js"></script>
+		<script src="js/changelanguage/Tibetan.js"></script>
+		<script src="js/changelanguage/changeLanguage.js"></script>
+		<script>
+			var url, act;
+			var resType;
+			mui.plusReady(function() {
+				guide();
+				//语言切换
+				if(plus.storage.getItem("language")){
+					resType = plus.storage.getItem("language");
+				}else{
+					resType = "CHINESE";
+				}
+				var changeLan = [{"TID":"register_l","RID":"index001","ATYPE":1},
+								{"TID":"forgetpsw_l","RID":"index002","ATYPE":1},
+								{"TID":"guide_infor","RID":"index004","ATYPE":1},
+								{"TID":"had","RID":"index005","ATYPE":1},
+								{"TID":"register_before","RID":"index006","ATYPE":1}]
+				resReplace(resType, changeLan);
+				 
+				if(!plus.storage.getItem("url")){
+					plus.storage.setItem("url","http://182.150.37.23:8888/");
+				}	
+				url = plus.storage.getItem("url");
+				act = plus.storage.getItem("account");
+				console.log(act + "===============================>");
+				gesture();
+				getUserOrMoney();//总用户与总资金
+			});
+			window.addEventListener("geturl",function(e){
+				url = event.detail.url;
+				console.log(url);
+			}); 
+			/*
+			 * 引导
+			 */
+			function guide(){
+				var guide =plus.storage.getItem('guide');
+				if(!guide){
+					document.getElementById("guide").style.display='block';
+					document.getElementById("had").addEventListener("tap",function(){
+						mui.openWindow({
+							url: 'html/change_account.html'
+						});
+					});
+					document.getElementById("register_before").addEventListener("tap",function(){
+						mui.openWindow({
+							url: 'html/new_register.html'
+						});
+					});
+					plus.storage.setItem('guide','1');
+					console.log(plus.storage.getItem('guide'));
+				}else{
+					document.getElementById("guide").style.display='none';
+					document.getElementById("holder").style.display='block';
+					document.getElementById("action_p").style.display='block';
+				}
+			}
+			/*
+			 * 手势滑动处理
+			 */
+			function gesture(){
+				(function($, doc) {
+					$.init();
+					var holder = doc.querySelector('#holder'),
+						alert = doc.querySelector('#alert'),
+						record = [];
+					//处理事件
+					holder.addEventListener('done', function(event) {
+						var rs = event.detail;
+						if (rs.points.length < 4) {
+							mui.toast(dictRes[resType]["allPage001"]);
+							record = [];
+							rs.sender.clear();
+							return;
+						}
+						console.log(rs.points.join(''));
+						record.push(rs.points.join(''));
+						if (record.length >= 1) {
+							checkLogin(record[record.length - 1]);
+							rs.sender.clear();
+						} else {
+							rs.sender.clear();
+						}
+					});
+				}(mui, document));
+			}
+			
+			/*
+			 * 登录验证
+			 */
+			function checkLogin(pwd){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM005",
+					"addr":act,
+					"pwd":pwd
+				};
+				console.log(act);
+				console.log(pwd);
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {  
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						console.log(data.cms);
+						if(data.cbm == "OK"){
+							plus.storage.setItem("hash",JSON.parse(data.cms).ahash);
+							mui.openWindow({
+								url: 'home.html',
+								id: "home",
+								extras: {
+									pwd:pwd
+								}
+							});
+						}else if(data.cbm == "ERR"){
+							mui.toast(dictRes[resType]["RSE002"]);	
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						mui.toast(dictRes[resType]["allPage003"]);
+						console.log(type);
+					}
+				});
+			}
+			/*
+			 * 流通资金与用户数获取
+			 */
+			function getUserOrMoney(){
+				argin = {
+					"version":"0.0.3",
+					"codein":"BM008"
+				};
+				argin = JSON.stringify(argin);
+				mui.ajax(url + "api", {
+					data: {
+						argin: argin
+					},
+					dataType: 'json',
+					type: 'get',
+					timeout: 10000,
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						console.log(data.cms);
+						if(data.cbm == "OK"){
+							var cms = JSON.parse(data.cms);
+							document.getElementById("total_user_span").innerText = cms.users;
+//							document.getElementById("total_money_span").innerText = cms.money;
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						console.log(type);
+					}
+				});
+			}
+			document.getElementById("register_l").addEventListener("tap",function(){
+				mui.openWindow({
+					url: 'html/new_register.html'
+				});
+			});
+			document.getElementById("forgetpsw_l").addEventListener("tap",function(){
+				mui.openWindow({
+					url: 'html/change_account.html'
+				});
+			});
+			document.getElementById("setting").addEventListener("tap",function(){
+				mui.openWindow({
+					url: 'html/node_setting.html',
+					id: "node_setting"
+				});
+			});
+			document.getElementById("language").addEventListener('tap',function(){
+				mui.openWindow({
+					url: 'html/language.html',
+					id: "language.html"
+				});
+			})
+			window.addEventListener('refresh',function(event){
+				resType = event.detail.language;
+				var changeLan = [{"TID":"register_l","RID":"index001","ATYPE":1},
+								{"TID":"forgetpsw_l","RID":"index002","ATYPE":1},
+								{"TID":"guide_infor","RID":"index004","ATYPE":1},
+								{"TID":"had","RID":"index005","ATYPE":1},
+								{"TID":"register_before","RID":"index006","ATYPE":1}]
+				resReplace(resType, changeLan);
+				console.log("ok");
+			});
+		</script>
+	</body>
+
+</html>
