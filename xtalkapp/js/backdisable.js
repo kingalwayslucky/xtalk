@@ -1,0 +1,3 @@
+mui.back = function() {
+	return;
+};
