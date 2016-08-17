@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="UTF-8">
+      	mui.init();
+    </script>
+    <style type="text/css">
+    	.mui-bar-tab .mui-tab-item.mui-active {
+			    color: white;
+			    background-color: rgb(237,68,29);
+			    
+			}
+			.mui-bar-tab .mui-tab-item {
+			    color: white;
+			    background-color: #242529;
+			}
+    </style>
+</head>
+<body>
+
+	<nav class="mui-bar mui-bar-tab">
+			<a id="home" class="mui-tab-item mui-active" style="">
+				
+				<div style="width: 100%;height: 20px;margin-top: 15px;text-align: center;"><img src="img/18.png" style="height: 20px;width: 20px;"/></div>
+				
+				<span id="account" style="font-size: 12px;">账 户</span>
+			</a>
+			
+			<a id="my" class="mui-tab-item" >
+				<div style="width: 100%;height: 20px;margin-top: 15px;text-align: center;"><img src="img/20.png" style="height: 20px;width: 20px;"/></div>
+				<span id="contact" style="font-size: 12px;">联系人</span>
+			</a>
+			<a id="act" class="mui-tab-item" >
+				<div style="width: 100%;height: 20px;margin-top: 15px;text-align: center;"><img src="img/19.png" style="height: 20px;width: 20px;"/></div>
+				<span id="transaction" style="font-size: 12px;">打 赏</span>
+			</a>
+			<a id="more" class="mui-tab-item" >
+				<div style="width: 100%;height: 20px;margin-top: 15px;text-align: center;"><img src="img/21.png" style="height: 20px;width: 20px;"/></div>
+				<span id="about" style="font-size: 12px;">关 于</span>
+			</a>
+	</nav>  
+</body>
+<script src="js/changelanguage/chinese.js"></script>
+<script src="js/changelanguage/english.js"></script>
+<script src="js/changelanguage/TraditionalChinese.js"></script>
+<script src="js/changelanguage/Korean.js"></script>
+<script src="js/changelanguage/Japanese.js"></script>
+<script src="js/changelanguage/Tibetan.js"></script>
+<script src="js/changelanguage/changeLanguage.js"></script>
+<script type="text/javascript">
+		var resType;
+		var showedwebview = 0;
+		var aniShow = {};
+		var webviews = new Array();
+		var webviewarray = ['html/Account/account.html','html/Account/aboutus.html','html/Contact/contact.html','html/Market/market.html'];
+//		mui.init({ 
+//		    subpages:[{
+//		      url:'html/Account/account.html', 
+//		      id:'html/Account/account.html',
+//		      styles:{
+//		        top:'0',//mui标题栏默认高度为45px；
+//		        bottom:'45px'//默认为0px，可不定义；
+//		      }
+//		    }]
+//		  });
+		mui.plusReady(function(){
+			//语言切换
+			if(plus.storage.getItem("language")){
+				resType = plus.storage.getItem("language");
+			}else{
+				resType = "CHINESE";
+			}
+			var changeLan = [{"TID":"account","RID":"home001","ATYPE":1},
+							{"TID":"transaction","RID":"about015","ATYPE":1},
+							{"TID":"contact","RID":"home003","ATYPE":1},
+							{"TID":"about","RID":"home004","ATYPE":1}]
+			resReplace(resType, changeLan);
+			console.log(plus.webview.currentWebview().pwd);
+			initwebview();
+			openWindow();
+		});
+		/*
+		 * 创建子页面
+		 */
+		function initwebview() {   
+			var self = plus.webview.currentWebview();
+			for (var i = 0; i < webviewarray.length; i++){
+				webviews[i] = plus.webview.create(webviewarray[i], webviewarray[i], {top: 0,bottom: 45});
+				self.append(webviews[0]);
+			}
+		};
+			
+		/*
+		 * 打开页面
+		 */
+		function openWindow(){
+			mui('.mui-tab-item').each(function() {
+				this.addEventListener('tap', function() {
+					if (this.classList.contains('mui-active')) {
+						return;
+					}
+					var animation = 'slide-in-left';
+					switch (this.id) {
+						//						case 'myrelease':
+						//							webviews[5].show('slide-in-bottom');
+						//							break;
+						case 'home':
+							hiddenwebview();
+							if (showedwebview < 0) {
+								animation = 'slide-in-right';
+							}
+							webviews[0].show(animation);
+							webviews[showedwebview].hide();
+							showedwebview = 0;
+							mui.fire(plus.webview.getWebviewById("html/Account/account.html"),"sendFresh",{from:"home"});
+							break;	
+						case 'act':
+							if (showedwebview < 1) {
+								animation = 'slide-in-right';
+							}
+							webviews[1].show(animation);
+							showedwebview = 1;
+							mui.fire(plus.webview.getWebviewById("html/Account/aboutus.html"),"freshpage",{from:"home"});
+							break;
+						case 'my':
+							if (showedwebview < 2) {
+								animation = 'slide-in-right';
+							}
+							webviews[2].show(animation);
+							showedwebview = 2;
+							mui.fire(plus.webview.getWebviewById("html/Contact/contact.html"),"reloadlist");
+							break;	
+						case 'more': 
+							if (showedwebview < 3) {
+								animation = 'slide-in-right';
+							}
+							webviews[3].show(animation);
+							showedwebview = 3;
+							break;
+						default:
+							console.log('myrelease');
+							break;
+					}
+					});
+				}); 
+			}
+			/**
+			* 隐藏所有页面
+			 */
+			function hiddenwebview() {
+				for (var i = 0; i < webviews.length; i++) {
+					if (i != showedwebview) {
+						webviews[i].hide();
+						console.log(webviews[i].id);
+					}
+					}
+				};
+</script>
+</html>

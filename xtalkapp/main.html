@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<!--标准mui.css-->
+		<link rel="stylesheet" href="css/mui.min.css">
+		<!--App自定义的css-->
+		<style>
+			.oa-contact-cell.mui-table .mui-table-cell {
+				padding: 11px 0;
+				vertical-align: middle;
+			}
+			
+			.oa-contact-cell {
+				position: relative;
+				margin: -11px 0;
+			}
+	
+			.oa-contact-avatar {
+				width: 75px;
+			}
+			.oa-contact-avatar img {
+				border-radius: 50%;
+				width: 60px;
+				height: 60px;
+			}
+			.oa-contact-content {
+				width: 100%;
+			}
+			.oa-contact-name {
+				margin-right: 20px;
+			}
+			.oa-contact-name, oa-contact-position {
+				float: left;
+			}
+			a{
+				color: #333333;
+			}
+			.myhead {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				float: left;
+				margin-right: 20px;
+			}
+			.erweima {
+				width: 25px;
+				height: 25px;
+				float: right;
+				margin-top: -33px;
+				margin-right: 10px;
+			}
+			#tabbar-with-map img{
+				width: 70px;
+				height: 70px;
+				border-radius: 15px;
+				margin-top: 20px;
+			}
+			#tabbar-with-map p{
+				text-align: center;
+				color: black;
+			}
+			.app {
+				width: 220px;
+				margin: 0 auto;
+			}
+			.mui-bar-tab .mui-tab-item.mui-active {
+			    color: white;
+			    background-color: rgb(237,68,29);
+			    
+			}
+			.mui-bar-tab .mui-tab-item {
+			    color: white;
+			    background-color: #242529;
+			    
+			}
+			#add_p img{
+				position: absolute;
+				height: 22px;
+				width: 22px;
+				margin-top: 12px;
+				right: 3%;
+			}
+			#search_div img{
+				position: absolute;
+				height: 22px;
+				width: 22px;
+				margin-top: 10px;
+				right: 20%;
+			}
+			#quick_search{
+				position: absolute;top: 2px;height: 40px;width: 80%;
+			}
+			#qrcode{
+				height:200px;width: 100%;text-align: center;
+			}
+			#qrcode img{
+				width: 200px;height: 200px;text-align: center;
+			}
+		</style>
+	</head>
+
+	<body>
+		<!--<header id="header" class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-personadd mui-pull-right"></a>
+			<h1 class="mui-title">私密(9)</h1>
+		</header>-->
+		<nav id="nav" class="mui-bar mui-bar-tab">
+			<a id="" class="mui-tab-item mui-active" href="#tabbar-with-chat">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">联系列表</span>
+			</a>
+			<a class="mui-tab-item" href="#tabbar-with-contact">
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">个人中心</span>
+			</a>
+			<a class="mui-tab-item" href="#tabbar-with-map">
+				<span class="mui-icon mui-icon-download"></span>
+				<span class="mui-tab-label">应用市场</span>
+			</a>
+		</nav>
+		<div class="mui-content">
+			<div id="tabbar-with-chat" class="mui-control-content mui-active">
+				<div class="mui-bar mui-bar-nav">
+					<!--<a id="add_p" class="mui-icon mui-icon-plusempty mui-pull-right" style="font-size: 35px;margin-bottom: 10px;"></a>-->
+					<input id="quick_search" type="text" onfocusout="ischeck()" placeholder="快速查找"/>
+					<div id="add_p"><img src="img/Index_09.png"/></div>
+					<div id="search_div"><img src="img/Index_07.png"/></div>
+				</div>
+				
+				<ul id="list_ul" class="mui-table-view mui-table-view-striped mui-table-view-condensed" style="margin-top: 44px;">
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="img/headpic_1.jpg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">叶文洁</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									好久没联系了，找个机会聚聚吧。
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="img/headpic_2.png" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">艾AA</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									这个周末准备怎么过啊？
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="img/headpic_3.jpeg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">罗辑</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									我这边遇到点问题，你过来看一下
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="img/headpic_4.jpg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">云天明</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									我换号码了，这是我的新号码：18632459654
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+				<li class="mui-table-view-cell">
+					<div class="mui-slider-cell">
+						<div class="oa-contact-cell mui-table">
+							<div class="oa-contact-avatar mui-table-cell">
+								<img src="img/headpic_5.jpeg" />
+							</div>
+							<div class="oa-contact-content mui-table-cell">
+								<div class="mui-clearfix">
+									<h4 class="oa-contact-name">史强</h4>
+								</div>
+								<p class="oa-contact-email mui-h6">
+									吃饭了没有？
+								</p>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+			</div>
+			<div id="tabbar-with-contact" class="mui-control-content" style="margin-top: 44px;">
+				<!--<div class="mui-bar mui-bar-nav">
+					<h1 class="mui-title">个人中心</h1>
+				</div>-->
+				<div id="qrcode">
+					<img  src="img/erweima.png"/> 
+				</div>
+				<!--<ul class="mui-table-view">
+					<li class="mui-table-view-cell">
+						<img class="myhead" src="img/myhead.jpg" />
+						<p style="color: black;">点点</p>
+						<p style="font-size: 11px;">莫欺少年穷</p>
+						
+					</li>
+				</ul>-->
+				<ul class="mui-table-view" style="margin-top: 15px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+							钱包管理
+						</a>
+					</li>
+					<li id="changeanswer" class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+							修改提示问题
+						</a>
+					</li>
+					<li id="changepsw" class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+							修改密码
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view" style="margin-top: 15px;">
+					<li class="mui-table-view-cell">
+						<a class="mui-navigate-right">
+							关于我们
+						</a>
+					</li>
+				</ul>
+				<ul class="mui-table-view" style="margin-top: 15px;">
+					<li class="mui-table-view-cell">
+						<a style="text-align: center;color: #FF3B30;">
+							退出登录
+						</a>
+					</li>
+				</ul>
+				
+			</div>
+			<div id="tabbar-with-map" class="mui-control-content" style="margin-top: 44px;">
+				<div class="mui-bar mui-bar-nav">
+					<h1 class="mui-title">我的应用</h1>
+				</div>
+				<div class="app">
+					<div style="display: inline-block;margin-right: 70px;">
+						<img src="img/APPlogo_1.jpg" />
+						<p>生活</p>
+					</div>
+					<div style="display: inline-block;">
+						<img src="img/APPlogo_2.jpg" />
+						<p>狼狈</p>
+					</div>
+				</div>
+				<div class="app">
+					<div style="display: inline-block;margin-right: 70px;">
+						<img src="img/APPlogo_3.jpg" />
+						<p>游鱼</p>
+					</div>
+					<div style="display: inline-block;">
+						<img src="img/APPlogo_4.jpg" />
+						<p>阿狸</p>
+					</div>
+				</div>
+				<div class="app">
+					<div style="display: inline-block;margin-right: 70px;">
+						<img src="img/APPlogo_5.jpg" />
+						<p>育婴</p>
+					</div>
+					<div style="display: inline-block;">
+						<img src="img/add.jpg" />
+						<p>更多..</p>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</body> 
+	<script src="js/mui.min.js"></script>
+	<script src="js/backquit.js"></script>
+	<script>
+		mui.init({
+			swipeBack:true //启用右滑关闭功能
+		});
+		var messages = ['好久没联系了，找个机会聚聚吧。', '这个周末准备怎么过啊？','我这边遇到点问题，你过来看一下', '我换号码了，这是我的新号码：18632459654', '吃饭了没有？'];
+		var names = ['叶文洁','艾AA','罗辑','云天明','史强'];
+		var headpic = ['../img/headpic_1.jpg','../img/headpic_2.png','../img/headpic_3.jpeg','../img/headpic_4.jpg','../img/headpic_5.jpeg'];
+		var chat_list = document.getElementsByClassName("mui-table");
+		var chat_lengeh = chat_list.length;
+		for(i=0; i<chat_lengeh; i++){
+			chat_list[i].name = names[i];
+			chat_list[i].message = messages[i];
+			chat_list[i].headpic = headpic[i];
+			chat_list[i].addEventListener("tap",function(){
+				mui.openWindow({
+				    url: 'html/message_us.html', 
+				    extras:{
+				     	message: this.message,
+				     	name: this.name,
+				     	headpic: this.headpic
+				    }
+				});
+			});
+		}
+		document.getElementById("add_p").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'html/add_person.html' 
+			});
+		});
+		document.getElementById("changeanswer").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'html/changeanswer.html' 
+			});
+		});
+		document.getElementById("changepsw").addEventListener("tap",function(){
+			mui.openWindow({
+				url: 'html/changepsw.html' 
+			});
+		});
+		//快速查找
+		document.getElementById("quick_search").addEventListener('keyup',function(){
+			var name=document.getElementById("quick_search").value;
+			console.log("ok"+name);
+			var lis =document.getElementById("list_ul").getElementsByTagName('li');
+			console.log(lis.length);
+//			var toname= lis[0].getElementsByTagName('h4')[0].innerText;
+//			console.log(toname);
+			for(var i=0;i<lis.length;i++){
+				var toname=lis[i].getElementsByTagName('h4')[0].innerText;
+				if(toname.match(name)){
+					lis[i].style.display='';
+					console.log('显示所有人');
+				}else{
+					lis[i].style.display='none';
+				}
+			}
+		});
+		//快速查找函数
+		function ischeck(){
+			var name=document.getElementById("quick_search").value;
+			console.log("ok"+name);
+			var lis =document.getElementById("list_ul").getElementsByTagName('li');
+			console.log(lis.length);
+//			var toname= lis[0].getElementsByTagName('h4')[0].innerText;
+//			console.log(toname);
+			for(var i=0;i<lis.length;i++){
+				var toname=lis[i].getElementsByTagName('h4')[0].innerText;
+				if(toname.match(name)){
+					lis[i].style.display='';
+					console.log('显示所有人');
+				}else{
+					lis[i].style.display='none';
+				}
+			}
+		}
+		
+		document.getElementById("quick_search").addEventListener('focusin',function(){
+			document.getElementById("nav").style.display='none';
+		})
+		window.addEventListener('tap',function(){
+			document.getElementById("nav").style.display='';
+		})
+	</script>
+</html>
