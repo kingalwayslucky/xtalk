@@ -1,0 +1,98 @@
+body {
+	background-color: #242529;
+	text-align: center;
+	padding-top: 90px;
+}
+#header {
+	background-color: #616473; 
+}
+.mui-bar-nav {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+a{
+	color: white;
+	margin-top: -3px;
+	margin-right: 15px;
+	margin-left: -9px;
+}
+.mui-title {
+	color: white;
+}
+#header img {
+	width: 20px;
+	margin-top: 15px;
+	margin-left: 15px;
+}
+.all_input {
+	margin: 50px;
+}
+.input_div {
+	position: relative;
+	margin: auto;
+	margin-bottom: 13px;
+	text-align: left;
+	height: 40px;
+	width: 100%;
+	padding: 10px 15px;
+	background-color: white;
+	border-radius: 3px;
+}
+input[type=tel],
+input[type=password],
+input[type=text] {
+	padding: 0px;
+	background: none;
+	border: none;
+	border-radius: 0px;
+	height: auto;
+	font-size: 14px;
+	margin-bottom: 0px;
+	line-height: 21px;
+	color: black;
+}
+input[type=tel]::-webkit-input-placeholder,
+input[type=password]::-webkit-input-placeholder,
+input[type=text]::-webkit-input-placeholder {
+	color: rgba(0, 0, 0, .3);
+}
+.register_btn {
+	margin-top: 30px;
+	width: 100%;
+	height: 40px;
+	background-color: rgba(237, 68, 29, 1);
+	border: none;
+	color: white;
+}
+#register_btn:active {
+	background-color: rgba(237, 68, 29, .4);
+}
+.copy {
+	font-size: 10px;
+	color: rgba(255, 255, 255, .2);
+	margin-top: 180px; 
+}
+.mui-input-group {
+    color: rgba(0, 0, 0, .3);
+    padding-left: 15px;
+    border-radius: 3px;
+}
+.mui-select:before {
+    right: 10px;
+}
+.mui-input-group:before {
+    height: 0px;
+}
+.mui-input-group .mui-input-row:after {
+    height: 0px;
+}
+.mui-input-group:after {
+    height: 0px;
+}
+.mui-input-row select {
+    font-size: 14px; 
+    height: 40px;
+}
+select {
+    margin-top: 0px;
+}

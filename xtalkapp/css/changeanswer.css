@@ -1,0 +1,122 @@
+body {
+	background-color: white;
+	text-align: center;
+	padding-top: 90px;
+}
+#header {
+	background-color: #616473;
+}
+.mui-bar-nav {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+a{
+	color: white;
+	margin-top: -3px;
+	margin-right: 15px;
+	margin-left: -9px;
+}
+.mui-title {
+	color: white;
+}
+#header img {
+	width: 20px;
+	margin-top: 15px;
+	margin-left: 15px;
+}
+.all_input {
+	margin: 20px;
+}
+.input_div {
+	position: relative;
+	margin: auto;
+	margin-bottom: 13px;
+	text-align: left;
+	height: 40px;
+	width: 100%;
+	padding: 10px 15px;
+	border-bottom: 1px solid #A8CDDB;
+}
+#verify {
+	height: 25px;
+	line-height: 0.9;
+	background-color: #ed441d;
+	color: white;
+	border: none;	
+	position: absolute;
+	right: 0;
+	bottom: 10px;
+}
+#verify:active{
+	background-color: rgba(237, 68, 29, .5);
+}
+input[type=tel],
+input[type=password],
+input[type=text] {
+	padding: 0px;
+	background: none;
+	border: none;
+	border-radius: 0px;
+	height: auto;
+	font-size: 14px;
+	margin-bottom: 0px;
+	line-height: 21px;
+	color: black;
+}
+input[type=tel]::-webkit-input-placeholder,
+input[type=password]::-webkit-input-placeholder,
+input[type=text]::-webkit-input-placeholder {
+	color: rgba(0, 0, 0, .5);
+}
+.register_btn {
+	margin-top: 30px;
+	width: 48%;
+	height: 40px;
+	background-color: rgb(237, 68, 29);
+	border: none;
+	color: white;
+}
+#register_btn:active {
+	background-color: rgba(237, 68, 29, .5);
+}
+.return_btn {
+	margin-top: 30px;
+	margin-left: 3px;
+	width: 48%;
+	height: 40px;
+	background-color: rgb(172, 175, 184);
+	border: none;
+	color: white;
+}
+#return_btn:active {
+	background-color: rgba(172, 175, 184, .5);
+}
+/*.copy {
+	font-size: 11px;
+	color: #BBBBBB;
+	margin-top: 150px;
+}*/
+.mui-input-group {
+    color: rgba(0, 0, 0, .5);
+    padding-left: 15px;
+    border-bottom:1px solid #A8CDDB;
+}
+.mui-select:before {
+    content: '';
+}
+.mui-input-group:before {
+    height: 0px;
+}
+.mui-input-group .mui-input-row:after {
+    height: 0px;
+}
+.mui-input-group:after {
+    height: 0px;
+}
+.mui-input-row select {
+    font-size: 14px; 
+    height: 40px;
+}
+select {
+    margin-top: 0px;
+}

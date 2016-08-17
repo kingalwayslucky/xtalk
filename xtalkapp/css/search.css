@@ -1,0 +1,32 @@
+body,
+html {
+	background-color: #000000;
+}
+.mui-bar-nav {
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	height: 44px;
+	background-color: #b0b7c1;
+}
+#search{
+	color: white;
+	float:left;
+	margin-top: 13px;
+	margin-left: 28%;
+}
+.mui-input-row{
+	/*position: absolute;
+	left: 50px;
+	top: 5px;*/
+	/*width: 210px;*/	
+	/*border-bottom: 1px solid #d8d8d8;*/
+	
+}
+#search_content{
+	background-color:rgb(172,175,183);
+	font-size: 15px;
+	margin-top: 5px;
+	color: white;
+	border: none;
+	
+}

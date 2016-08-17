@@ -1,0 +1,91 @@
+body {
+	background: url(../img/login-bg.jpg);
+	background-size: cover;
+	text-align: center;
+}
+.title{
+	font-size: 50px;
+	color: white;
+	margin-top: 100px;
+}
+#login_input_div {
+	/*width: 240px;*/
+	margin: auto 15px;
+	margin-top: 100px;
+}
+.input_div {
+	border-bottom: 1px solid #62646A;
+	margin-bottom: 10px;
+	text-align: left;
+	height: 37px;
+	padding: 10px 15px;
+}
+#tel_img,
+#psw_img {
+	width: 13px;
+	/*height: 17px;*/
+	margin-right: 21px;
+	margin-bottom: -2px;
+}
+input[type=tel],
+input[type=password] {
+	padding: 0px;
+	background: none;
+	border: none;
+	font-size: 15px;
+	height: auto;
+	border-radius: 0px;
+	width: 150px;
+	margin-bottom: 0px;
+	color: white;
+}
+input[type=tel]::-webkit-input-placeholder,
+input[type=password]::-webkit-input-placeholder {
+	color: #62646a;
+	line-height: 1.5;
+}
+.action_btn {
+	width: 100%;
+	height: 55px;
+	color: white;
+	/*border-radius: 20px;*/
+	font-size: 17px;
+	font-weight: bold;
+	border-color: rgba(255, 255, 255, .1);
+	background: rgba(255, 255, 255, .1);
+	margin-top: 40px;
+	margin-bottom: 10px;
+}
+#before_line_div {
+	height: 1px;
+	width: 70px;
+	background: #9BC4D0;
+	display: inline-block;
+	margin-bottom: 4px;
+	margin-right: 15px;
+}
+#after_line_div {
+	height: 1px;
+	width: 70px;
+	background: #9BC4D0;
+	display: inline-block;
+	margin-bottom: 4px;
+	margin-left: 15px;
+}
+#login_btn:active {
+	background: #5fa8bf;
+}
+#action_p {
+	font-size: 14px;
+	color: rgba(255, 255, 255, .5);
+	margin-top: 30px;
+	/*position: absolute;
+	bottom: 30px;
+	left: 0;
+	right: 0;*/
+}
+.copy {
+	font-size: 10px;
+	color: rgba(255, 255, 255, .2);
+	margin-top: 130px;
+}
